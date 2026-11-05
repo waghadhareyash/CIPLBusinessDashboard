@@ -1,1 +1,742 @@
-Hello
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CIPL Business Dashboard – web version demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+:root{
+  box-sizing:border-box;
+  color-scheme:light;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f4f5f7; --surface:#ffffff; --text:#101828; --text2:#667085; --line:#e4e7ec; --rowline:#edf0f3;
+  --head:#fdf3ea; --sec:#f1f3f6; --tot:#fff0e2; --hover:#f6f8fb;
+  --accent:#0f766e; --accent-ink:#ffffff; --accent-soft:#dff1ee; --neg:#c2410c;
+  --okb:#dcfce7; --okt:#166534; --wb:#fef3c7; --wt:#92400e; --bb:#fee2e2; --bt:#991b1b;
+  --font:Manrope,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+body{height:100%;margin:0;font-family:var(--font);font-size:14px;color:var(--text);background:var(--bg);font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:40}
+button,select,input{font-family:inherit}
+.app{height:100%;display:grid;grid-template-columns:224px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+
+/* top bar */
+.topbar{grid-column:1 / -1;grid-row:1;display:flex;align-items:center;gap:14px;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;min-width:196px}
+.brand b{font-size:15.5px;font-weight:800;letter-spacing:-.01em;display:block;line-height:1.15}
+.brand span{color:var(--text2);font-size:12px;display:block;line-height:1.2}
+.sp{flex:1}
+.ctl{display:flex;flex-direction:column;gap:2px}
+.ctl label{font-size:11px;color:var(--text2);font-weight:600}
+.topbar select{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:13px;font-weight:600;min-width:150px}
+.topbar select:focus-visible,.btn:focus-visible,.tab:focus-visible,.chip:focus-visible,.cin:focus-visible,.q:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:9px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--hover)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.pri:hover{filter:brightness(1.08);background:var(--accent)}
+.avs{display:flex;align-items:center}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;border:2px solid var(--surface);margin-left:-8px;position:relative}
+.av:first-child{margin-left:0}
+.av i{position:absolute;right:-2px;bottom:-2px;width:10px;height:10px;border-radius:50%;background:#22c55e;border:2px solid var(--surface)}
+
+/* sidebar */
+.tabbar{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:4px;background:var(--surface);border-right:1px solid var(--line);padding:14px 12px;overflow:auto}
+.tab{display:flex;align-items:center;gap:11px;border:0;background:transparent;color:var(--text2);padding:10px 12px;font-size:13.5px;font-weight:700;cursor:pointer;border-radius:10px;text-align:left}
+.tab svg{flex:none}
+.tab:hover{background:var(--hover);color:var(--text)}
+.tab[aria-selected="true"]{background:var(--accent-soft);color:var(--accent)}
+.status .pill{border-radius:10px;line-height:1.35;text-align:left}
+.status{margin-top:auto;display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--text2);padding:12px 6px 2px;border-top:1px solid var(--line)}
+
+/* stage */
+.stage{grid-column:2;grid-row:2;min-height:0;overflow:auto;padding:18px 22px 32px;background:var(--bg)}
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:sticky;left:0}
+.q{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:9px;padding:8px 12px;font-size:13px;width:250px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:999px;padding:5px 13px;font-size:12.5px;font-weight:700;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:var(--surface)}
+.chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2)}
+.note{background:var(--surface);border:1px solid var(--line);border-left:4px solid #d99a2b;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:13px;color:var(--text);position:sticky;left:0;max-width:900px}
+.foot{font-size:12px;color:var(--text2);margin:12px 0 0;max-width:900px;position:sticky;left:0;line-height:1.5}
+
+/* summary strip */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:16px;overflow:clip;position:sticky;left:0;max-width:1240px}
+.kpi{padding:14px 18px;border-right:1px solid var(--line)}
+.kpi:last-child{border-right:0}
+.kpi small{color:var(--text2);font-size:12px;font-weight:600;display:block}
+.kpi b{font-size:25px;font-weight:800;letter-spacing:-.02em;display:block;margin:3px 0 7px;line-height:1.1}
+.kpi span{font-size:12px;color:var(--text2)}
+
+/* the sheet: same table, modern skin */
+.sheet{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:14px;overflow:clip;width:max-content;min-width:100%;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.shead{display:grid;grid-template-columns:1fr auto;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);gap:2px 16px}
+.shead .co{font-size:17px;font-weight:800;letter-spacing:-.01em;line-height:1.2}
+.shead .tt{font-size:13px;color:var(--text2);font-weight:600;grid-column:1}
+.shead .rt{grid-column:2;grid-row:1 / span 2;display:flex;align-items:center;gap:18px}
+.tbox{background:var(--accent-soft);color:var(--text);border-radius:10px;padding:7px 16px;text-align:left;font-size:12px;font-weight:600;line-height:1.3}
+.tbox b{display:block;font-size:19px;font-weight:800;color:var(--accent);letter-spacing:-.01em}
+table.x{border-collapse:separate;border-spacing:0;table-layout:fixed;width:100%}
+.x td,.x th{border:0;border-bottom:1px solid #c9cfd8;border-right:1px solid #c9cfd8;padding:0 10px;height:32px;font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.x th{background:var(--head);color:var(--text);font-weight:800;text-align:center;line-height:1.25;white-space:normal;height:auto;padding:9px 6px;font-size:12px;border-bottom:1px solid #b9c0cb}
+.x th small{font-weight:600;font-size:11px;color:var(--text2)}
+.x thead th{position:sticky;top:0;z-index:2}
+.x.dash thead th{position:static}
+.x td.gap,.x th.gap{border:0;background:transparent;padding:0}
+.x td.gap + td,.x th.gap + th{border-left:1px solid #c9cfd8}
+.x tr:first-child th:first-child,.x td:first-child,.x th:first-child{border-left:0}
+.x tr.sec td{background:var(--sec);font-weight:800;border-bottom:1px solid var(--line);border-top:1px solid var(--line)}
+.x tr.sec td.l{text-align:center;border-left:3px solid var(--accent)}
+.x tr.sec td.t{text-align:left}
+.x tr.sec td.mw,.x tr.sec td.gap{background:transparent;border-color:transparent}
+.x tr.pe td{background:var(--tot);font-weight:800}
+.x tr.pe td.mw{background:transparent}
+.x tr.tot td{background:var(--tot);font-weight:800;border-top:1px solid var(--line)}
+.x tr.bt td{font-weight:800}
+.x tbody tr:not(.sec):not(.tot):not(.pe):not(.empty):hover td:not(.gap):not(.mw){background:var(--hover)}
+.x td.n{text-align:center}
+.x td.r{text-align:right}
+.x td.lb{text-align:left}
+.x td.mc{text-align:center;padding:0 2px}
+.x td.neg{color:var(--neg);font-weight:700}
+.x td.ed{padding:0}
+.x td.ed:hover{box-shadow:inset 0 0 0 1.5px var(--accent);cursor:text}
+.x td.ed:focus-within{box-shadow:inset 0 0 0 2px var(--accent);background:var(--surface)}
+.cin{display:block;width:100%;height:30px;border:0;background:transparent;font:inherit;color:inherit;text-align:inherit;padding:0 10px;outline:none;text-overflow:ellipsis}
+td.n .cin,td.mc .cin{text-align:center}
+td.mc .cin{padding:0 2px}
+select.cin{appearance:none;-webkit-appearance:none;cursor:pointer}
+input[type=month].cin{padding:0 4px;color-scheme:light}
+.pb{display:inline-block;width:46px;height:6px;border-radius:99px;background:var(--line);vertical-align:middle;margin-right:8px;overflow:hidden}
+.pb i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.pb.wide{display:block;width:100%;margin:0 0 7px}
+td.pcx{white-space:nowrap}
+.pl,td.st-c .cin,td.st-p .cin,td.st-l .cin{display:inline-block;border-radius:999px;font-weight:800;font-size:12px;padding:3px 12px;line-height:1.3}
+td.st-c .cin,td.st-p .cin,td.st-l .cin{height:auto;width:auto;margin:0 auto;padding:3px 12px}
+td.st-c .pl,td.st-c .cin{background:var(--okb);color:var(--okt)}
+td.st-p .pl,td.st-p .cin{background:var(--wb);color:var(--wt)}
+td.st-l .pl,td.st-l .cin{background:var(--bb);color:var(--bt)}
+.x tr.reg td{height:34px}
+.x tr.reg td.nm{text-align:left}
+.x tr.empty td{text-align:center;color:var(--text2);height:56px}
+.pres{outline:2px solid var(--pc);outline-offset:-2px;position:relative;overflow:visible!important}
+.pres::after{content:attr(data-who);position:absolute;right:-2px;top:0;transform:translateY(-100%);background:var(--pc);color:#fff;font-size:10.5px;font-weight:700;line-height:1;padding:3px 7px;border-radius:5px 5px 0 0;white-space:nowrap;z-index:5}
+.flag{color:#d97706;cursor:pointer;font-weight:800}
+.x.sum{width:280px;margin:14px 0 16px 18px}
+.x.sum td{padding:0 12px}
+.x.sum .ok{color:var(--accent);font-weight:800}
+
+/* admin panels */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;max-width:980px;margin-bottom:16px}
+.panel h2{margin:0 0 4px;font-size:18px;font-weight:800}
+.panel p{margin:0 0 12px;color:var(--text2);font-size:13px}
+table.ux{border-collapse:collapse;width:100%;font-size:13px}
+.ux th,.ux td{padding:10px 10px;border-bottom:1px solid var(--rowline);text-align:left}
+.ux th{font-size:12px;color:var(--text2);font-weight:800}
+.ux td.c,.ux th.c{text-align:center}
+.pill{display:inline-block;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:800;background:var(--accent-soft);color:var(--accent)}
+.pill.v{background:var(--sec);color:var(--text2)}
+.pill.on{background:var(--accent);color:var(--accent-ink)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:7px}
+.dot.off{background:#9aa19d}
+
+/* drawer + toast */
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(380px,92vw);background:var(--surface);color:var(--text);border-left:1px solid var(--line);z-index:50;transform:translateX(100%);transition:transform .2s ease;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:-10px 0 28px rgba(16,24,40,.16)}
+.drawer.open{transform:none}
+.drawer header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.drawer h3{margin:0;font-size:16px;font-weight:800}
+.drawer .x-btn{border:0;background:transparent;color:var(--text);font-size:22px;cursor:pointer;line-height:1}
+.drawer ol{list-style:none;margin:0;padding:6px 0;overflow:auto;flex:1}
+.drawer li{display:flex;gap:12px;padding:12px 18px;border-bottom:1px solid var(--rowline);font-size:13px;line-height:1.45}
+.drawer li .av{margin:0;flex:none}
+.drawer li time{display:block;color:var(--text2);font-size:11.5px;margin-top:2px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#101828;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;max-width:90vw}
+.toast[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.drawer{transition:none}}
+@media (max-width:820px){
+  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr)}
+  .tabbar{grid-column:1;grid-row:2;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:8px}
+  .tab{white-space:nowrap}
+  .status{display:none}
+  .stage{grid-column:1;grid-row:3;padding:14px 10px 28px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi{border-bottom:1px solid var(--line)}
+  .q{width:100%}
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M3 27 L15 3 L27 27" fill="none" stroke="#e5484d" stroke-width="2.6"/><path d="M9 27 L15 14 L21 27" fill="none" stroke="#b5bcb8" stroke-width="2"/></svg>
+      <div><b>Contours Interio</b><span>Business Dashboard</span></div>
+    </div>
+    <div class="ctl"><label for="fySel">Financial year</label><select id="fySel"></select></div>
+    <div class="sp"></div>
+    <div class="avs" id="avs" aria-label="People online"></div>
+    <button class="btn" id="actBtn" type="button">Activity</button>
+    <button class="btn" id="expBtn" type="button">Export to Excel</button>
+    <div class="ctl"><label for="roleSel">Signed in as (demo)</label><select id="roleSel"></select></div>
+  </header>
+  <main class="stage" id="stage"></main>
+  <nav class="tabbar" id="tabbar" role="tablist" aria-label="Sheets"></nav>
+</div>
+
+<aside class="drawer" id="drawer" aria-label="Activity" aria-hidden="true">
+  <header><h3>Activity</h3><button class="x-btn" id="drClose" type="button" aria-label="Close activity">×</button></header>
+  <ol id="logList"></ol>
+</aside>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+"use strict";
+var D={"enqPrev": [{"sr": 1, "m": "2025-11", "name": "Mr. Nitin Tappe", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 20, "client": "Individual", "status": "Confirm", "rem": ""}, {"sr": 2, "m": "2025-12", "name": "Lupin Sus Terrace MS Work (Porta Cabin)", "cat": "Office", "scope": "Civil", "ct": "Turnkey", "loc": "Pune", "val": 18, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 3, "m": "2026-01", "name": "Lupin Delhi Head Office - 2", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Delhi", "val": 54, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 4, "m": "2026-02", "name": "CDAC", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 125, "client": "Corporate", "status": "Lost", "rem": "Budget Challenge"}, {"sr": 5, "m": "2026-02", "name": "Mr. Kutte", "cat": "Bungalow", "scope": "Landscape", "ct": "Turnkey", "loc": "Pune", "val": 37.5, "client": "Individual", "status": "Lost", "rem": "Client Challenge"}, {"sr": 6, "m": "2026-03", "name": "Mr. Vivek Deshmukh", "cat": "Farmhouse", "scope": "Civil + Interior", "ct": "Turnkey", "loc": "Dapoli", "val": 200, "client": "Individual", "status": "In Progress", "rem": ""}, {"sr": 7, "m": "2026-03", "name": "Lonavala", "cat": "Farmhouse", "scope": "Landscape", "ct": "Turnkey", "loc": "Lonavala", "val": 36, "client": "Individual", "status": "Lost", "rem": ""}, {"sr": 8, "m": "2026-03", "name": "Koregaon Park", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Koregaon", "val": 140, "client": "Individual", "status": "Lost", "rem": "Others"}, {"sr": 9, "m": "2026-03", "name": "Starlight Industries", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Nashik", "val": 66.79, "client": "Corporate", "status": "Lost", "rem": "Out of Scope"}], "enq": [{"sr": 10, "m": "2026-04", "name": "Knest", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 365, "client": "Corporate", "status": "Lost", "rem": ""}, {"sr": 11, "m": "2026-04", "name": "Lupin Atharv Ability Mumbai", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Mumbai", "val": 26, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 12, "m": "2026-04", "name": "Mr. Patil Bungalow, Paniv", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Paniv", "val": 33, "client": "Individual", "status": "Confirm", "rem": ""}, {"sr": 13, "m": "2026-04", "name": "JSW Steel Ltd.", "cat": "Office", "scope": "Civil + Interior", "ct": "Turnkey", "loc": "Raigad", "val": 50, "client": "Corporate", "status": "Lost", "rem": "Out of Scope"}, {"sr": 14, "m": "2026-04", "name": "COEP", "cat": "Hostel", "scope": "Interior", "ct": "Maintenance", "loc": "Pune", "val": 15, "client": "Corporate", "status": "Lost", "rem": ""}, {"sr": 15, "m": "2026-04", "name": "Clear Skin Clinic (Entry Modification)", "cat": "Hospital", "scope": "Interior", "ct": "Maintenance", "loc": "Pune", "val": 1.85, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 16, "m": "2026-04", "name": "Panchshil Tower", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 25, "client": "Corporate", "status": "Lost", "rem": ""}, {"sr": 17, "m": "2026-05", "name": "Ar. Arish Chenni Sopanbaug", "cat": "Bungalow", "scope": "Plumbing", "ct": "Turnkey", "loc": "Pune", "val": 50, "client": "Individual", "status": "Confirm", "rem": ""}, {"sr": 18, "m": "2026-05", "name": "Mr. Rambole", "cat": "Bungalow", "scope": "Interior", "ct": "Maintenance", "loc": "Pune", "val": 7.5, "client": "Individual", "status": "Confirm", "rem": ""}, {"sr": 19, "m": "2026-05", "name": "Kothrud Office", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 45, "client": "Corporate", "status": "Lost", "rem": ""}, {"sr": 20, "m": "2026-05", "name": "Castle Royal Mr. Niman", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 40, "client": "Corporate", "status": "Lost", "rem": "Budget Challenge"}, {"sr": 21, "m": "2026-06", "name": "Shah EPC", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Sangli", "val": 74.6, "client": "Corporate", "status": "Lost", "rem": "Budget Challenge"}, {"sr": 22, "m": "2026-06", "name": "Mr. Mehtani Bungalow (External Development)", "cat": "Bungalow", "scope": "Landscape", "ct": "Turnkey", "loc": "Pune", "val": 109, "client": "Individual", "status": "Confirm", "rem": ""}, {"sr": 23, "m": "2026-06", "name": "Markin", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Gurugram", "val": 100, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 24, "m": "2026-06", "name": "Rakindas", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Delhi", "val": 45, "client": "Corporate", "status": "Lost", "rem": "Budget Challenge"}, {"sr": 25, "m": "2026-06", "name": "Shivkrupa Bank (8 branches)", "cat": "Office", "scope": "Commercial", "ct": "Turnkey", "loc": "Multiple Locations", "val": 192, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 26, "m": "2026-06", "name": "Ajinkya D. Y. Patil", "cat": "Hospital", "scope": "Commercial", "ct": "Turnkey", "loc": "Pune", "val": 106.1065, "client": "Corporate", "status": "Lost", "rem": ""}, {"sr": 27, "m": "2026-06", "name": "ABIL Boulevard (Cary Entry Exit Repairing)", "cat": "Building", "scope": "Landscape", "ct": "Maintenance", "loc": "Pune", "val": 3.19, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 28, "m": "2026-06", "name": "ABIL Boulevard (Duct Glory)", "cat": "Building", "scope": "Landscape", "ct": "Maintenance", "loc": "Pune", "val": 6.26, "client": "Corporate", "status": "Lost", "rem": ""}, {"sr": 29, "m": "2026-06", "name": "ABIL Boulevard (Terrace)", "cat": "Building", "scope": "Landscape", "ct": "Maintenance", "loc": "Pune", "val": 5, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 30, "m": "2026-06", "name": "Lupin Pashan (6th Floor Toilet Renovation)", "cat": "Office", "scope": "Interior", "ct": "Maintenance", "loc": "Pune", "val": 13.5, "client": "Corporate", "status": "In Progress", "rem": ""}, {"sr": 31, "m": "2026-07", "name": "SBI Card", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 12, "client": "Corporate", "status": "Lost", "rem": "Client Challenge"}, {"sr": 32, "m": "2026-07", "name": "Divya Ramraika", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 133, "client": "Individual", "status": "Confirm", "rem": ""}, {"sr": 33, "m": "2026-07", "name": "Knest", "cat": "Office", "scope": "Civil + Interior", "ct": "Turnkey", "loc": "Pune", "val": 353.96896, "client": "Corporate", "status": "Lost", "rem": "Client Challenge"}, {"sr": 34, "m": "2026-07", "name": "Anvaya Spine Clinic", "cat": "Hospital", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 42, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 35, "m": "2026-07", "name": "ASMU (Office)", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 15, "client": "Individual", "status": "In Progress", "rem": ""}, {"sr": 36, "m": "2026-08", "name": "Tyton 26 floor", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Mumbai", "val": 70, "client": "Corporate", "status": "Confirm", "rem": ""}, {"sr": 37, "m": "2026-08", "name": "Dinesh Jain", "cat": "Bungalow", "scope": "Plumbing", "ct": "Turnkey", "loc": "Pune", "val": 60, "client": "Individual", "status": "In Progress", "rem": ""}, {"sr": 38, "m": "2026-08", "name": "Yashvant Nagar Club House", "cat": "Bungalow", "scope": "Civil + Interior", "ct": "Turnkey", "loc": "Pune", "val": 200, "client": "Corporate", "status": "In Progress", "rem": ""}, {"sr": 39, "m": "2026-08", "name": "Mr. Suriyanarayanan Farmhouse", "cat": "Farmhouse", "scope": "Residential", "ct": "Turnkey", "loc": "Nashik", "val": 300, "client": "Individual", "status": "In Progress", "rem": "Design in Progress"}, {"sr": 40, "m": "2026-08", "name": "Mr. Suriyanarayanan Bungalow", "cat": "Bungalow", "scope": "Residential", "ct": "Turnkey", "loc": "Nashik", "val": 50, "client": "Individual", "status": "In Progress", "rem": ""}, {"sr": 41, "m": "2026-08", "name": "Mr. Gaidhani Apartment", "cat": "Apartment", "scope": "Residential", "ct": "Turnkey", "loc": "PCMC", "val": 80, "client": "Individual", "status": "In Progress", "rem": "Site Handover"}, {"sr": 42, "m": "2026-08", "name": "Mr. Prem Kedia", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Mumbai", "val": 30, "client": "Individual", "status": "In Progress", "rem": ""}, {"sr": 43, "m": "2026-08", "name": "Mr. Kamtekar", "cat": "Apartment", "scope": "Residential", "ct": "Turnkey", "loc": "Pune", "val": 30, "client": "Individual", "status": "Confirm", "rem": ""}, {"sr": 44, "m": "2026-08", "name": "RB Bank Shivajinagar", "cat": "Office", "scope": "Commercial", "ct": "Turnkey", "loc": "Pune", "val": 44, "client": "Corporate", "status": "In Progress", "rem": ""}, {"sr": 45, "m": "2026-09", "name": "Dabhade's Bungalow Talegaon", "cat": "Bungalow", "scope": "Civil + Interior", "ct": "Turnkey", "loc": "Pune", "val": 120, "client": "Individual", "status": "Confirm", "rem": ""}, {"sr": 46, "m": "2026-09", "name": "Dr. Khalkar Boutique Hotel", "cat": "Hotel", "scope": "Commercial", "ct": "Turnkey", "loc": "Nashik", "val": 125, "client": "Individual", "status": "In Progress", "rem": "Design in Progress"}, {"sr": 47, "m": "2026-09", "name": "Cosmo Factory", "cat": "Factory", "scope": "Plumbing", "ct": "Turnkey", "loc": "Shirval", "val": 30, "client": "Corporate", "status": "In Progress", "rem": ""}, {"sr": 48, "m": "2026-09", "name": "Shrikant Joshi", "cat": "Bungalow", "scope": "Interior", "ct": "Maintenance", "loc": "PCMC", "val": 14, "client": "Individual", "status": "Confirm", "rem": ""}, {"sr": 49, "m": "2026-09", "name": "Markin Mumbai - HO", "cat": "Office", "scope": "Interior", "ct": "Maintenance", "loc": "Mumbai", "val": 32.25, "client": "Individual", "status": "In Progress", "rem": ""}, {"sr": 50, "m": "2026-09", "name": "Markin Mumbai - Warehouse", "cat": "Office", "scope": "Interior", "ct": "Maintenance", "loc": "Mumbai", "val": 26, "client": "Individual", "status": "In Progress", "rem": ""}, {"sr": 51, "m": "2026-09", "name": "Ashiyana Office", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 48, "client": "Corporate", "status": "Lost", "rem": "Client Challenge"}, {"sr": 52, "m": "2026-09", "name": "Lupin Sus Old Canteen Kitchen Renovation", "cat": "Factory", "scope": "Civil + Interior", "ct": "Turnkey", "loc": "Pune", "val": 41, "client": "Corporate", "status": "In Progress", "rem": ""}, {"sr": 53, "m": "2026-10", "name": "Mr. Shailesh", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 35, "client": "Individual", "status": "In Progress", "rem": ""}, {"sr": 54, "m": "2026-10", "name": "Mr. Gurmeet", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 40, "client": "Individual", "status": "In Progress", "rem": ""}, {"sr": 55, "m": "2026-10", "name": "Lupin Pashan 1st Floor Toilet Renovation", "cat": "Office", "scope": "Interior", "ct": "Maintenance", "loc": "Pune", "val": 21.5, "client": "Corporate", "status": "In Progress", "rem": ""}], "spill": [{"id": "P25", "name": "Divya Ramrahika - Star Engineering", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 260, "bal": 58.563032203389824, "pct": 1, "rem": ""}, {"id": "P36", "name": "Bhartiya Bungalow - Advik HiTech", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 122, "bal": 50.8817843220339, "pct": 1, "rem": ""}, {"id": "P40", "name": "Bharat Kalambe", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 170, "bal": 56.13730576271186, "pct": 1, "rem": ""}, {"id": "P46", "name": "Aman Darshan Mehtani (AMSU Bungalow)", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 189.53, "bal": 58.67254813559322, "pct": 1, "rem": ""}, {"id": "P49", "name": "Dabhade's Bungalow Talegaon", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 103.82, "bal": 28.619999999999997, "pct": 1, "rem": ""}, {"id": "P50", "name": "West In Resort  (Guest Rooms)", "cat": "Hotel", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 208.93, "bal": 17.57058118644065, "pct": 1, "rem": ""}, {"id": "P51", "name": "Rajarambapu Sahakari Bank Karad", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Karad", "val": 32.97, "bal": 9, "pct": 1, "rem": ""}, {"id": "P53", "name": "Lupin I Delhi Office", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Gurugram", "val": 337.84, "bal": 82.32650000000001, "pct": 1, "rem": ""}, {"id": "P56", "name": "Meridian Baner (ABIL Imperial)", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 36.14, "bal": 9.28144, "pct": 1, "rem": ""}, {"id": "P57", "name": "Tyton - 27th Floor (Deepak Fertilizers)", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Mumbai", "val": 181.1, "bal": 196, "pct": 1, "rem": ""}, {"id": "P58", "name": "Hadron Global Business Solutions", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 146.5, "bal": 71.55, "pct": 1, "rem": ""}, {"id": "S58", "name": "Mr. Deshmukh Residence", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 32, "bal": 3, "pct": 1, "rem": ""}, {"id": "S60", "name": "Mr. Vishal Vohra", "cat": "Apartment", "scope": "Interior", "ct": "Plumbing", "loc": "Pune", "val": 8, "bal": 2, "pct": 1, "rem": ""}, {"id": "S62", "name": "Mr. Sushil Bahirat", "cat": "Apartment", "scope": "Interior", "ct": "Civil", "loc": "Pune", "val": null, "bal": 2.219999999999999, "pct": 1, "rem": ""}, {"id": "S63", "name": "ABIL Boulevard KP (External Development)", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 38, "bal": 19.133993559322032, "pct": 1, "rem": ""}, {"id": "S66", "name": "Mr. Varun Pitre (Castle Royal)", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": null, "bal": 17.5, "pct": 1, "rem": ""}, {"id": "S67", "name": "Clear Skin PS II", "cat": "Clinic", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": null, "bal": 7.9, "pct": 1, "rem": ""}, {"id": "P44", "name": "Dr. Kashyap Hospital", "cat": "Hospital", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": null, "bal": 10, "pct": 1, "rem": ""}, {"id": "P48", "name": "Five Garden (Mr. Viraj Thaploo)", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": null, "bal": 12, "pct": 1, "rem": ""}], "orders": [{"m": "2026-04", "id": "S68", "name": "Lupin Atharv Ability Mumbai", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Mumbai", "val": 24, "pct": 1, "rem": ""}, {"m": "2026-05", "id": "P60", "name": "Mr. Patil Bungalow, Paniv", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Paniv", "val": 33, "pct": 1, "rem": ""}, {"m": "2026-05", "id": "S69", "name": "Mr. Rambole", "cat": "Bungalow", "scope": "Interior", "ct": "Maintenance", "loc": "Pune", "val": 7.5, "pct": 1, "rem": ""}, {"m": "2026-05", "id": "S65", "name": "Lupin Sus Terrace MS Work (Porta Cabin)", "cat": "Office", "scope": "Civil", "ct": "Turnkey", "loc": "Pune", "val": 18, "pct": 1, "rem": ""}, {"m": "2026-06", "id": "P61", "name": "Lupin Delhi Head Office - 2", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Delhi", "val": 54, "pct": 1, "rem": ""}, {"m": "2026-07", "id": "S63", "name": "ABIL Boulevard (Cary Entry Exit Repairing)", "cat": "Building", "scope": "Landscape", "ct": "Maintenance", "loc": "Pune", "val": 3.2, "pct": 1, "rem": ""}, {"m": "2026-07", "id": "P62", "name": "Shivkrupa Bank (8 branches)", "cat": "Office", "scope": "Commercial", "ct": "Turnkey", "loc": "Multiple Locations", "val": 192, "pct": 1, "rem": ""}, {"m": "2026-08", "id": "P46", "name": "Mr. Mehtani Bungalow (External Development)", "cat": "Bungalow", "scope": "Landscape", "ct": "Turnkey", "loc": "Pune", "val": 109, "pct": 0.7, "rem": ""}, {"m": "2026-08", "id": "P25", "name": "Mr. Ramraika (Pool Side Interior)", "cat": "Bungalow", "scope": "Civil + Interior", "ct": "Turnkey", "loc": "Pune", "val": 130, "pct": 0.9, "rem": ""}, {"m": "2026-08", "id": "S72", "name": "Mr. Nitin Tappe", "cat": "Bungalow", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 20, "pct": 1, "rem": ""}, {"m": "2026-08", "id": "P65", "name": "Anvaya Spine Clinic", "cat": "Hospital", "scope": "Interior", "ct": "Turnkey", "loc": "Pune", "val": 40, "pct": 1, "rem": ""}, {"m": "2026-10", "id": "P66", "name": "Ar. Arish Chenni Sopanbaug", "cat": "Bungalow", "scope": "Plumbing", "ct": "Turnkey", "loc": "Pune", "val": 30, "pct": 0.1, "rem": ""}, {"m": "2026-10", "id": "P67", "name": "Tyton 26th Floor", "cat": "Apartment", "scope": "Interior", "ct": "Turnkey", "loc": "Mumbai", "val": 30, "pct": 1, "rem": ""}, {"m": "2026-10", "id": "P68", "name": "Markin", "cat": "Office", "scope": "Interior", "ct": "Turnkey", "loc": "Gurugram", "val": 110, "pct": 1, "rem": ""}, {"m": "2026-10", "id": "S73", "name": "Shrikant Joshi", "cat": "Bungalow", "scope": "Interior", "ct": "Maintenance", "loc": "PCMC", "val": 14, "pct": 1, "rem": ""}, {"m": "2026-10", "id": "P49", "name": "Dabhade's Bungalow Talegaon", "cat": "Bungalow", "scope": "Civil + Interior", "ct": "Turnkey", "loc": "Pune", "val": 120, "pct": 0.2, "rem": "", "ovr": 40}], "dashA": [[1, null, 1, 1, 2, 0, null, null, null, null, null, null], [0, 1, 4, 1, 3, 2, null, null, null, null, null, null], [2, 2, 1, 1, 4, 4, 2, null, null, null, null, null], [4, 1, 4, 2, 0, 2, 1, null, null, null, null, null]], "dashC": [[null, null, null, null, null, null, null, null, null, null, null, null], [null, null, 1, 1, null, 1, null, null, null, null, null, null], [null, null, 2, null, 1, null, null, null, null, null, null, null], [1, 1, null, 1, 1, null, null, null, null, null, null, null], [2, 1, 2, null, null, 1, null, null, null, null, null, null]]};
+
+/* ===================== constants ===================== */
+var MN=['Apr','May','June','July','Aug','Sept','Oct','Nov','Dec','Jan','Feb','Mar'];
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var LA=['Above 1.50 Crs.','Above 60 lakhs to 1.50 Crs.','Above 30 lakhs to 60 lakhs','Below 30 lakhs'];
+var LC=['Above 2 Crs.','Above 1.20 Crs. To 2 Crs.','Above 60 lakhs to 1.2 Crs','Above 30 lakhs to 60 lakhs','Below 30 lakhs'];
+var CATS=['Office','Bungalow','Apartment','Farmhouse','Hospital','Clinic','Hotel','Hostel','Factory','Building'];
+var SCOPES=['Interior','Civil','Civil + Interior','Landscape','Plumbing','Commercial','Residential'];
+var CTS=['Turnkey','Maintenance','Plumbing','Civil'];
+var CLIENTS=['Individual','Corporate'];
+var STATUSES=['Confirm','In Progress','Lost'];
+var ROLES={
+  admin:{name:'Rajesh Kulkarni',title:'Admin',init:'RK',color:'#8a3b2a',email:'rajesh@company.example',can:['targets','monthly','billing','register','projects','users']},
+  sales:{name:'Neha Patil',title:'Sales coordinator',init:'NP',color:'#2f6b8a',email:'neha@company.example',can:['register']},
+  projects:{name:'Amit Deshpande',title:'Project manager',init:'AD',color:'#6b4b9a',email:'amit@company.example',can:['projects']},
+  accounts:{name:'Sunita More',title:'Accounts',init:'SM',color:'#a27413',email:'sunita@company.example',can:['billing']},
+  viewer:{name:'Management guest',title:'Viewer',init:'MG',color:'#5f6663',email:'guest@company.example',can:[]}
+};
+var TABS=[
+  {id:'dash',label:'Business Dashboard'},
+  {id:'reg',label:'Enquiries Register'},
+  {id:'prj',label:'Ongoing Projects'},
+  {id:'usr',label:'Users & Access',admin:true}
+];
+
+/* ===================== helpers ===================== */
+function $(s){return document.querySelector(s);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function sum(a){var t=0;for(var i=0;i<a.length;i++){t+=(+a[i]||0);}return t;}
+function fmt(n,d){if(d==null)d=2;return Number(n).toLocaleString('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function rs(n){return '\u20B9 '+fmt(n);}
+function pc(a,b){return b?Math.round(a/b*100)+'%':'\u2013';}
+function mIdx(ym){var m=+ym.slice(5,7);return (m-4+12)%12;}
+function mLbl(ym){if(!ym)return '';var m=+ym.slice(5,7);return MS[m-1]+"'"+ym.slice(2,4);}
+function blank12(){return [null,null,null,null,null,null,null,null,null,null,null,null];}
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function bandA(v){return v>150?0:v>60?1:v>30?2:3;}
+function bandC(v){return v>200?0:v>120?1:v>60?2:v>30?3:4;}
+function nowStamp(){var d=new Date();return d.getDate()+' '+MS[d.getMonth()]+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function yy(n){return String(n%100).padStart(2,'0');}
+function pcb(a,b){if(!b)return '\u2013';var p=Math.max(0,Math.min(100,a/b*100));return '<span class="pb"><i style="width:'+p+'%"></i></span>'+Math.round(a/b*100)+'%';}
+function pcc(a,b){return '<td class="n pcx">'+pcb(a,b)+'</td>';}
+function pcp(a,b){return '<td class="n">'+pc(a,b)+'</td>';}
+function sfc(n){return '<td class="n'+(n<0?' neg':'')+'">'+n+'</td>';}
+function heat(v){return v>0?' style="background:color-mix(in srgb,var(--accent) '+Math.min(36,10+v*6)+'%,transparent)"':'';}
+
+
+/* ===================== data ===================== */
+var FY={};
+function newBlankFY(y,tgt){
+  var key=y+'-'+yy(y+1);
+  return {key:key,label:'FY '+yy(y)+'-'+yy(y+1),y:y,asOf:'01.04.'+yy(y),asOfLabel:"April'"+yy(y),locked:false,note:'',
+    prevLabel:'FY '+yy(y-1)+'-'+yy(y),
+    tgt:clone(tgt),
+    dash:{A:[blank12(),blank12(),blank12(),blank12()],C:[blank12(),blank12(),blank12(),blank12(),blank12()],bill:[blank12(),blank12()],coll:[blank12(),blank12()]},
+    enquiries:[],spill:[],orders:[]};
+}
+var T0={enq:[18,30,24,30],ord:[2,4,10,8,10],book:2000,bill:1800,coll:0};
+var SAMPLE_ROWS=[
+ ['2024-04','Sample - Corporate office fit-out','Office','Interior','Turnkey','Pune',180,'Corporate','Confirm'],
+ ['2024-04','Sample - 3BHK apartment','Apartment','Interior','Turnkey','Pune',42,'Individual','Confirm'],
+ ['2024-05','Sample - Clinic renovation','Clinic','Interior','Turnkey','Pune',28,'Corporate','Lost'],
+ ['2024-06','Sample - Bungalow landscape','Bungalow','Landscape','Turnkey','Nashik',64,'Individual','Confirm'],
+ ['2024-07','Sample - Showroom','Office','Commercial','Turnkey','Mumbai',210,'Corporate','Lost'],
+ ['2024-08','Sample - Farmhouse civil work','Farmhouse','Civil + Interior','Turnkey','Lonavala',320,'Individual','Confirm'],
+ ['2024-09','Sample - Toilet renovation','Office','Interior','Maintenance','Pune',12,'Corporate','Confirm'],
+ ['2024-10','Sample - Hotel rooms','Hotel','Interior','Turnkey','Pune',140,'Corporate','Lost'],
+ ['2024-11','Sample - 2BHK apartment','Apartment','Interior','Turnkey','Pune',35,'Individual','Confirm'],
+ ['2024-12','Sample - Bank branches','Office','Commercial','Turnkey','Multiple Locations',95,'Corporate','Confirm'],
+ ['2025-01','Sample - Hospital wing','Hospital','Interior','Turnkey','Pune',110,'Corporate','Lost'],
+ ['2025-02','Sample - Villa plumbing','Bungalow','Plumbing','Turnkey','Pune',22,'Individual','Confirm'],
+ ['2025-03','Sample - Factory canteen','Factory','Civil + Interior','Turnkey','Shirval',58,'Corporate','Confirm']
+];
+function sampleMoney(f,billA,billB,collA,collB){
+  f.dash.bill=[billA,billB];f.dash.coll=[collA,collB];f.tgt.coll=f.tgt.bill;
+}
+function sampleYear(h){
+  SAMPLE_ROWS.forEach(function(r,i){
+    h.enquiries.push({sr:i+1,m:r[0],name:r[1],cat:r[2],scope:r[3],ct:r[4],loc:r[5],val:r[6],client:r[7],status:r[8],rem:r[8]==='Lost'?'Budget Challenge':'',blk:'cur'});
+    if(r[8]==='Confirm')h.orders.push({m:r[0],id:'S'+(i+1),name:r[1],cat:r[2],scope:r[3],ct:r[4],loc:r[5],val:r[6],pct:1,rem:''});
+  });
+  h.dash.A=deriveA(h);h.dash.C=deriveC(h);
+  sampleMoney(h,[18,22,30,28,35,40,38,42,36,44,40,52],[0,0,6,0,0,8,0,0,5,0,0,0],[12,20,26,30,32,38,36,40,34,40,38,48],[0,0,4,0,0,6,0,0,5,0,0,0]);
+}
+
+
+(function seed(){
+  var f=newBlankFY(2026,T0);
+  f.asOf='12.10.26';f.asOfLabel="October'26";f.prevLabel='FY 24-25 / FY 25-26';
+  f.dash.A=clone(D.dashA);f.dash.C=clone(D.dashC);
+  f.enquiries=D.enqPrev.map(function(e){var x=clone(e);x.blk='prev';return x;}).concat(D.enq.map(function(e){var x=clone(e);x.blk='cur';return x;}));
+  f.spill=clone(D.spill);f.orders=clone(D.orders);
+  f.flagProg=true;
+  sampleMoney(f,[38.5,52,64.2,71.8,95.4,88.1,40.3,null,null,null,null,null],[null,null,12.5,null,18,null,null,null,null,null,null,null],[30,44,50,60,72,80,35,null,null,null,null,null],[null,null,10,null,14,null,null,null,null,null,null,null]);
+  f.dashNote='Billing and collection numbers are sample values for this demo. Your Excel file has none yet, so those rows were empty.';
+  FY['2026-27']=f;
+
+  var g=newBlankFY(2025,T0);
+  g.asOf='31.03.26';g.asOfLabel="March'26";g.locked=true;g.prevLabel='FY 24-25';
+  g.note='Partial history: the enquiry register started in Nov\u201925. Older months and orders are brought in from your Excel files when the system is set up.';
+  g.enquiries=D.enqPrev.map(function(e){var x=clone(e);x.blk='cur';return x;});
+  g.dash.A=deriveA(g);g.dash.C=deriveC(g);
+  sampleMoney(g,[10,14,18,20,22,26,28,30,24,32,30,36],blank12(),[8,12,16,18,20,24,26,28,22,30,28,34],blank12());
+  g.dashNote='Billing and collection numbers are sample values for this demo.';g.tag='partial';
+  FY['2025-26']=g;
+
+  var h=newBlankFY(2024,T0);
+  h.asOf='31.03.25';h.asOfLabel="March'25";h.locked=true;h.prevLabel='FY 23-24';
+  h.note='Sample year for the demo: every name and number here is made up. Real history is brought in from your Excel files when the system is set up.';
+  sampleYear(h);h.tag='sample';
+  FY['2024-25']=h;
+})();
+
+function deriveA(f){
+  var r=[blank12(),blank12(),blank12(),blank12()];
+  f.enquiries.forEach(function(e){if(e.blk!=='cur'||!e.m)return;var b=bandA(+e.val||0),j=mIdx(e.m);r[b][j]=(r[b][j]||0)+1;});
+  return r;
+}
+function deriveC(f){
+  var r=[blank12(),blank12(),blank12(),blank12(),blank12()];
+  f.enquiries.forEach(function(e){if(e.blk!=='cur'||e.status!=='Confirm'||!e.m)return;var b=bandC(+e.val||0),j=mIdx(e.m);r[b][j]=(r[b][j]||0)+1;});
+  return r;
+}
+
+/* ===================== state ===================== */
+var S={fy:'2026-27',tab:'dash',role:'admin',q:'',sf:'All',showPrev:true,last:null,
+  log:[
+    {who:ROLES.admin,text:'Loaded the FY 26-27 Excel workbook (as on 12.10.26).',time:'12 Oct, 10:05'},
+    {who:ROLES.projects,text:'Changed Mr. Mehtani Bungalow (External Development) completion from 100% to 70%.',time:'12 Oct, 10:42'},
+    {who:ROLES.sales,text:'Added enquiry 55 (Lupin Pashan 1st Floor Toilet Renovation).',time:'12 Oct, 11:20'}
+  ]};
+
+function can(area){
+  var r=ROLES[S.role],f=FY[S.fy];
+  if(r.can.indexOf(area)<0)return false;
+  if(f.locked&&S.role!=='admin')return false;
+  return true;
+}
+function tabArea(id){
+  if(id==='dash')return ['targets','monthly','billing'].filter(can);
+  if(id==='reg')return can('register')?['register']:[];
+  if(id==='prj')return can('projects')?['projects']:[];
+  return [];
+}
+
+/* ===================== calculations (the Excel formulas) ===================== */
+function calc(f){
+  var c={};
+  c.A=f.dash.A.map(sum);c.C=f.dash.C.map(sum);
+  c.colA=[];c.colC=[];
+  for(var j=0;j<12;j++){c.colA.push(sum(f.dash.A.map(function(r){return r[j];})));c.colC.push(sum(f.dash.C.map(function(r){return r[j];})));}
+  c.totA=sum(c.A);c.totC=sum(c.C);c.tgtA=sum(f.tgt.enq);c.tgtC=sum(f.tgt.ord);
+  var cur=f.enquiries.filter(function(e){return e.blk==='cur';});
+  function st(s){return cur.filter(function(e){return e.status===s;});}
+  function val(a){return sum(a.map(function(e){return e.val;}));}
+  c.B={count:cur.filter(function(e){return e.status;}).length,value:val(cur),conf:st('Confirm').length,confV:val(st('Confirm')),prog:st('In Progress').length,progV:val(st('In Progress')),lost:st('Lost').length,lostV:val(st('Lost'))};
+  c.spillK=sum(f.spill.map(function(r){return r.bal;}));
+  c.spillM=sum(f.spill.map(spillM));
+  c.ordJ=sum(f.orders.map(function(o){return o.val;}));
+  c.ordM=sum(f.orders.map(ordM));
+  c.expected=c.spillM+c.ordM;
+  c.bill=f.dash.bill.map(sum);c.coll=f.dash.coll.map(sum);
+  c.colBill=[];c.colColl=[];
+  for(var k=0;k<12;k++){c.colBill.push(sum(f.dash.bill.map(function(r){return r[k];})));c.colColl.push(sum(f.dash.coll.map(function(r){return r[k];})));}
+  return c;
+}
+function pctOf(r){return r.pct==null?1:r.pct;}
+function spillM(r){return (+r.bal||0)*pctOf(r);}
+function ordM(o){return o.ovr!=null?o.ovr:(+o.val||0)*pctOf(o);}
+
+/* ===================== cell builders ===================== */
+function presence(){
+  return null;
+  var f=FY[S.fy];if(f.key!=='2026-27'||f.locked)return null;
+  if(S.tab==='reg'){var u=S.role==='sales'?ROLES.admin:ROLES.sales;return {u:u,path:'enquiries.'+f.enquiries.findIndex(function(e){return e.sr===44&&e.blk==='cur';})+'.name'};}
+  if(S.tab==='prj'){var u2=S.role==='projects'?ROLES.admin:ROLES.projects;return {u:u2,path:'orders.15.pct'};}
+  if(S.tab==='dash'){var u3=S.role==='accounts'?ROLES.admin:ROLES.accounts;return {u:u3,path:'dash.bill.0.6'};}
+  return null;
+}
+var PRES=null;
+function pa(path){return PRES&&PRES.path===path?' pres" style="--pc:'+PRES.u.color+'" data-who="'+esc(PRES.u.name.split(' ')[0])+' is editing':'';}
+function tdIn(path,val,t,ed,cls){
+  cls=cls||'';
+  if(!ed)return '<td class="'+cls+'">'+esc(val==null?'':val)+'</td>';
+  return '<td class="ed '+cls+pa(path)+'"><input class="cin" data-p="'+path+'" data-t="'+t+'" value="'+esc(val==null?'':val)+'" inputmode="'+(t==='s'?'text':'decimal')+'" autocomplete="off"></td>';
+}
+function tdPct(path,val,ed,cls){
+  var shown=val==null?'':Math.round(val*1000)/10;
+  if(!ed)return '<td class="n '+(cls||'')+'">'+(val==null?'':shown+'%')+'</td>';
+  return '<td class="ed n '+(cls||'')+pa(path)+'"><input class="cin" data-p="'+path+'" data-t="p" value="'+shown+'" inputmode="decimal" aria-label="Percent complete" autocomplete="off"></td>';
+}
+function tdSel(path,val,opts,ed,cls){
+  cls=cls||'';
+  if(!ed)return '<td class="'+cls+'">'+(cls.indexOf('st-')>=0&&val?'<span class="pl">'+esc(val)+'</span>':esc(val))+'</td>';
+  var o=opts.slice();if(val&&o.indexOf(val)<0)o.push(val);
+  return '<td class="ed '+cls+pa(path)+'"><select class="cin" data-p="'+path+'" data-t="s">'+(val?'':'<option value=""></option>')+o.map(function(x){return '<option'+(x===val?' selected':'')+'>'+esc(x)+'</option>';}).join('')+'</select></td>';
+}
+function tdMonth(path,val,ed){
+  if(!ed)return '<td class="n">'+esc(mLbl(val))+'</td>';
+  return '<td class="ed n'+pa(path)+'"><input class="cin" type="month" data-p="'+path+'" data-t="s" value="'+esc(val||'')+'" aria-label="Month"></td>';
+}
+function mcells(arr,base,ed,kind){
+  var h='';
+  for(var j=0;j<12;j++){
+    var v=arr[j],p=base+'.'+j;
+    h+=ed?'<td class="ed mc mw'+pa(p)+'"'+heat(v)+'><input class="cin" data-p="'+p+'" data-t="n" value="'+(v==null?'':v)+'" inputmode="decimal" aria-label="'+MN[j]+'" autocomplete="off"></td>':'<td class="mc mw"'+heat(v)+'>'+(v==null?'':v)+'</td>';
+  }
+  return h;
+}
+function totCells(arr){return arr.map(function(v){return '<td class="mc">'+v+'</td>';}).join('');}
+function blankM(n){var h='';for(var i=0;i<(n||12);i++)h+='<td class="mw"></td>';return h;}
+function logo(){
+  return '<svg viewBox="0 0 190 52" width="190" height="52" role="img" aria-label="Contours Interio Pvt. Ltd."><path d="M6 47 L25 6 L44 47" fill="none" stroke="#c0392b" stroke-width="3"/><path d="M14 47 L25 23 L36 47" fill="none" stroke="#8a8a8a" stroke-width="2"/><text x="54" y="27" font-family="Carlito,Arial,sans-serif" font-weight="700" font-size="20" letter-spacing="3" fill="#5f5f5f">CONTOURS</text><text x="54" y="43" font-family="Carlito,Arial,sans-serif" font-size="9" letter-spacing="2" fill="#8a8a8a">INTERIO PVT. LTD.</text></svg>';
+}
+function sheetHead(title,box){
+  return '<div class="shead"><div class="co">Contours Interio Private Limited</div><div class="tt">'+esc(title)+'</div><div class="rt">'+(box||'')+logo()+'</div></div>';
+}
+
+
+function kpiHTML(f,c){
+  var B=c.B;
+  function bar(a,b){return '<div class="pb wide"><i style="width:'+Math.max(0,Math.min(100,b?a/b*100:0))+'%"></i></div>';}
+  return '<div class="kpis">'
+   +'<div class="kpi"><small>Enquiries received</small><b>'+c.totA+'</b>'+bar(c.totA,c.tgtA)+'<span>'+pc(c.totA,c.tgtA)+' of '+c.tgtA+' target</span></div>'
+   +'<div class="kpi"><small>Orders won</small><b>'+c.totC+'</b>'+bar(c.totC,c.tgtC)+'<span>'+pc(c.totC,c.tgtC)+' of '+c.tgtC+' target</span></div>'
+   +'<div class="kpi"><small>Order value booked</small><b>'+rs(c.ordJ)+'</b>'+bar(c.ordJ,f.tgt.book)+'<span>'+pc(c.ordJ,f.tgt.book)+' of '+fmt(f.tgt.book,0)+' L target</span></div>'
+   +'<div class="kpi"><small>Conversion ratio</small><b>'+pc(B.conf,B.count)+'</b>'+bar(B.conf,B.count)+'<span>'+pc(B.confV,B.value)+' by value</span></div>'
+   +'<div class="kpi"><small>Expected billing</small><b>'+rs(c.expected)+'</b>'+bar(c.expected,f.tgt.bill)+'<span>'+pc(c.expected,f.tgt.bill)+' of '+fmt(f.tgt.bill,0)+' L target</span></div>'
+   +'</div>';
+}
+/* ===================== Business Dashboard ===================== */
+function dashHTML(){
+  var f=FY[S.fy],c=calc(f),cT=can('targets'),cM=can('monthly'),cB=can('billing');
+  var h='';
+  h+=sheetHead('Business Dashboard \u2013 '+f.asOfLabel+' (as on '+f.asOf+')');
+  h+='<table class="x dash" style="width:1714px"><colgroup>';
+  [44,250,84,84,122,84,116,122,16].forEach(function(w){h+='<col style="width:'+w+'px">';});
+  for(var i=0;i<12;i++)h+='<col style="width:66px">';
+  h+='</colgroup><thead><tr><th rowspan="2">Sr.<br>No.</th><th rowspan="2">Particulars</th><th rowspan="2">Annual<br>Target<br><small>(In Nos.)</small></th><th colspan="2">Achieved / Actual<br><small>(till date) (In Nos.)</small></th><th rowspan="2">Shortfall<br><small>(in Nos.)</small></th><th colspan="2">Achieved / Actual<br><small>(till date) (In Nos.)</small></th><th class="gap" rowspan="2"></th><th colspan="12">Achieved - Monthly Register <small>(In Nos.)</small></th></tr>';
+  h+='<tr><th>Total<br><small>(In Nos.)</small></th><th>%</th><th>Total<br><small>(In Value; In Lakhs)</small></th><th>%</th>';
+  for(var m=0;m<12;m++)h+='<th>'+MN[m]+"'"+yy(m<9?f.y:f.y+1)+'</th>';
+  h+='</tr></thead><tbody>';
+
+  function sec(l,t,extra){return '<tr class="sec"><td class="l">'+l+'</td><td class="t">'+t+'</td>'+(extra||'<td colspan="6"></td>')+'<td class="gap"></td>'+blankM()+'</tr>';}
+
+  /* A */
+  h+=sec('A','Enquiries Generation');
+  for(var a=0;a<4;a++){
+    var tg=f.tgt.enq[a],ac=c.A[a];
+    h+='<tr>'+sfc(a+1)+'<td class="lb">'+LA[a]+'</td>'+tdIn('tgt.enq.'+a,tg,'n',cT,'n')+'<td class="n">'+ac+'</td>'+pcc(ac,tg)+''+sfc(ac-tg)+'<td class="n" colspan="2">NA</td><td class="gap"></td>'+mcells(f.dash.A[a],'dash.A.'+a,cM)+'</tr>';
+  }
+  h+='<tr class="tot"><td class="n">A 1</td><td class="lb">TOTAL (in Nos.)</td><td class="n">'+c.tgtA+'</td><td class="n">'+c.totA+'</td>'+pcc(c.totA,c.tgtA)+''+sfc(c.totA-c.tgtA)+'<td class="n" colspan="2">NA</td><td class="gap"></td>'+totCells(c.colA)+'</tr>';
+
+  /* B */
+  var B=c.B;
+  h+=sec('B','Enquiries - Status');
+  h+='<tr><td class="n">1</td><td class="lb">Total Enquiries (inclu. From last FY)</td><td></td><td class="n">'+B.count+'</td><td></td><td></td><td class="n">'+rs(B.value)+'</td><td></td><td class="gap"></td>'+blankM()+'</tr>';
+  h+='<tr class="bt"><td class="n">2</td><td class="lb">Confirm Orders</td><td></td><td class="n">'+B.conf+'</td>'+pcc(B.conf,B.count)+'<td></td><td class="n">'+rs(B.confV)+'</td>'+pcc(B.confV,B.value)+'<td class="gap"></td>'+blankM()+'</tr>';
+  h+='<tr><td class="n">3</td><td class="lb">Enquiries in Progress</td><td></td><td class="n">'+B.prog+'</td>'+pcc(B.prog,B.count)+'<td></td><td class="n"'+(f.flagProg?' title="Excel showed \u20B9 1,343.25 here. Its formula also counted a \u20B9 200 L enquiry from last year."':'')+'>'+rs(B.progV)+(f.flagProg?' \u2020':'')+'</td>'+pcc(B.progV,B.value)+'<td class="gap"></td>'+blankM()+'</tr>';
+  h+='<tr><td class="n">4</td><td class="lb">Lost</td><td></td><td class="n">'+B.lost+'</td>'+pcc(B.lost,B.count)+'<td></td><td class="n">'+rs(B.lostV)+'</td>'+pcc(B.lostV,B.value)+'<td class="gap"></td>'+blankM()+'</tr>';
+  h+='<tr class="pe"><td class="n">B 1</td><td class="lb">Success Conversion Ratio</td><td></td>'+pcp(B.conf,B.count)+'<td></td><td></td>'+pcp(B.confV,B.value)+'<td></td><td class="gap"></td>'+blankM()+'</tr>';
+
+  /* C */
+  h+=sec('C','Confirmed Order Booking');
+  for(var k=0;k<5;k++){
+    var tk=f.tgt.ord[k],ak=c.C[k];
+    h+='<tr>'+sfc(k+1)+'<td class="lb">'+LC[k]+'</td>'+tdIn('tgt.ord.'+k,tk,'n',cT,'n')+'<td class="n">'+ak+'</td>'+pcc(ak,tk)+''+sfc(ak-tk)+'<td colspan="2"></td><td class="gap"></td>'+mcells(f.dash.C[k],'dash.C.'+k,cM)+'</tr>';
+  }
+  h+='<tr class="tot"><td class="n">C1</td><td class="lb">TOTAL (in Nos.)</td><td class="n">'+c.tgtC+'</td><td class="n">'+c.totC+'</td>'+pcc(c.totC,c.tgtC)+''+sfc(c.totC-c.tgtC)+'<td colspan="2"></td><td class="gap"></td>'+totCells(c.colC)+'</tr>';
+
+  /* D booking in value */
+  h+=sec('D','Confirmed Order Booking');
+  h+='<tr class="pe"><td></td><td class="lb">(In Value)</td>'+tdIn('tgt.book',f.tgt.book,'n',cT,'n')+'<td class="n">'+c.totC+'</td><td></td><td></td><td class="n">'+fmt(c.ordJ)+'</td>'+pcc(c.ordJ,f.tgt.book)+'<td class="gap"></td>'+blankM()+'</tr>';
+  h+=sec('D','Target Client Billing');
+  h+='<tr class="pe"><td></td><td class="lb">(In Value)</td>'+tdIn('tgt.bill',f.tgt.bill,'n',cT,'n')+'<td></td><td></td><td></td><td class="n" colspan="2">NA</td><td class="gap"></td>'+blankM()+'</tr>';
+  h+=sec('E','Expected Client Billing (as on Date)');
+  h+='<tr class="pe"><td></td><td class="lb">(In Value)</td><td class="n">'+fmt(c.expected,0)+'</td><td></td><td></td><td></td><td class="n" colspan="2">NA</td><td class="gap"></td>'+blankM()+'</tr>';
+
+  /* F billing + collection */
+  function money(titleL,title,rows,key,tot,colTot,labs,target){
+    var x=sec(titleL,title,'<td colspan="6" class="lb" style="font-weight:400;font-style:italic;font-size:11px">*** Value in Lakhs</td>');
+    for(var r=0;r<2;r++){
+      x+='<tr>'+sfc(r+1)+'<td class="lb">'+labs[r]+'</td><td></td><td class="n">'+rs(tot[r])+'</td><td></td><td></td><td colspan="2"></td><td class="gap"></td>'+mcells(rows[r],'dash.'+key+'.'+r,cB)+'</tr>';
+    }
+    var T=sum(tot);
+    x+='<tr class="bt"><td></td><td></td><td class="n">'+(target?fmt(target,0):'')+'</td><td class="n">'+(T?rs(T):'\u2013')+'</td>'+pcc(T,target)+'<td></td><td colspan="2"></td><td class="gap"></td>'+totCells(colTot)+'</tr>';
+    return x;
+  }
+  h+=money('F','Actual Billing Done',f.dash.bill,'bill',c.bill,c.colBill,['CIPL : April '+yy(f.y)+' - March '+yy(f.y+1),'MCL Prov : April '+yy(f.y)+' - March '+yy(f.y+1)],f.tgt.bill);
+  h+=money('F','Revenue Collected',f.dash.coll,'coll',c.coll,c.colColl,['CIPL : April '+yy(f.y)+' - March '+yy(f.y+1),'Prov : April '+yy(f.y)+' - March '+yy(f.y+1)],f.tgt.coll);
+  h+='</tbody></table>';
+  return h;
+}
+
+/* ===================== Enquiries Register ===================== */
+function regRows(){
+  var f=FY[S.fy],ed=can('register'),q=S.q.trim().toLowerCase();
+  function ok(e){
+    if(S.sf!=='All'&&e.status!==S.sf)return false;
+    if(q&&(e.name+' '+e.loc+' '+e.cat+' '+e.rem+' '+e.client).toLowerCase().indexOf(q)<0)return false;
+    return true;
+  }
+  function row(e,i){
+    var P='enquiries.'+i+'.';
+    var cls=e.status==='Confirm'?'st-c':e.status==='In Progress'?'st-p':e.status==='Lost'?'st-l':'';
+    return '<tr class="reg"><td class="n">'+e.sr+'</td>'+tdMonth(P+'m',e.m,ed)+tdIn(P+'name',e.name,'s',ed,'nm')+tdSel(P+'cat',e.cat,CATS,ed)+tdSel(P+'scope',e.scope,SCOPES,ed)+tdSel(P+'ct',e.ct,CTS,ed)+tdIn(P+'loc',e.loc,'s',ed)+tdIn(P+'val',e.val,'n',ed,'n')+tdSel(P+'client',e.client,CLIENTS,ed)+tdSel(P+'status',e.status,STATUSES,ed,'n '+cls)+tdIn(P+'rem',e.rem,'s',ed)+'</tr>';
+  }
+  var prev=[],cur=[];
+  f.enquiries.forEach(function(e,i){if(ok(e)){(e.blk==='prev'?prev:cur).push(row(e,i));}});
+  var h='';
+  if(false){
+    h+='<tr class="sec"><td></td><td colspan="10" class="t" style="text-align:left;padding-left:8px">'+esc(f.prevLabel)+'</td></tr>'+(prev.join('')||'');
+  }
+  h+='<tr class="sec"><td></td><td colspan="10" style="text-align:left;padding-left:8px">'+esc(f.label)+'</td></tr>';
+  h+=cur.length?cur.join(''):'<tr class="empty"><td colspan="11">'+(f.enquiries.some(function(e){return e.blk==='cur';})?'No enquiries match this filter.':'No enquiries yet. Use \u201CAdd enquiry\u201D to enter the first one.')+'</td></tr>';
+  return h;
+}
+function regHTML(){
+  var f=FY[S.fy],c=calc(f),ed=can('register'),B=c.B;
+  var counts={All:B.count,Confirm:B.conf,'In Progress':B.prog,Lost:B.lost};
+  var h='<div class="bar"><input class="q" id="q" type="search" placeholder="Search project, location, client" value="'+esc(S.q)+'" aria-label="Search enquiries">';
+  ['All','Confirm','In Progress','Lost'].forEach(function(s){h+='<button type="button" class="chip" data-act="sf" data-v="'+s+'" aria-pressed="'+(S.sf===s)+'">'+s+' ('+counts[s]+')</button>';});
+  h+='<span class="sp"></span>'+(ed?'<button class="btn pri" type="button" data-act="addEnq">Add enquiry</button>':'')+'</div>';
+  if(f.note)h+='<div class="note lock">'+esc(f.note)+'</div>';
+  h+='<div class="sheet">'+sheetHead('Enquiries Register / Business Funnel \u2013 '+f.asOfLabel+' (as on '+f.asOf+')','<div class="tbox">Total expected value<b>'+rs(B.value)+'</b></div>');
+  h+='<table class="x" style="width:1518px"><colgroup>';
+  [48,140,320,104,128,108,128,100,104,128,210].forEach(function(w){h+='<col style="width:'+w+'px">';});
+  h+='</colgroup><thead><tr><th>Sr.<br>No.</th><th>Enquiry<br>Month</th><th>Project Name<br><small>(Client Name - Project Details)</small></th><th>Project<br>Category</th><th>Scope of<br>Works</th><th>Contract<br>Type</th><th>Location</th><th>Expected<br>Project Value<br><small>(Rs. In Lakhs)</small></th><th>Client Type<br><small>(Individual/<br>Corporate)</small></th><th>Status</th><th>Remarks / Updates<br><small>(Why lost)</small></th></tr></thead><tbody id="regBody">'+regRows()+'</tbody>';
+  h+='<tfoot><tr class="tot"><td colspan="2"></td><td class="lb">TOTAL</td><td colspan="4"></td><td class="n">'+fmt(B.value)+'</td><td colspan="3"></td></tr></tfoot></table>';
+  h+='<table class="x sum"><colgroup><col style="width:120px"><col style="width:140px"></colgroup>';
+  h+='<tr><td class="lb">Confirm</td><td class="r">'+fmt(B.confV)+'</td></tr><tr><td class="lb">Lost</td><td class="r">'+fmt(B.lostV)+'</td></tr><tr><td class="lb">In Progress</td><td class="r">'+fmt(B.progV)+'</td></tr>';
+  var tot=B.confV+B.lostV+B.progV,diff=Math.round((tot-B.value)*100)/100;
+  h+='<tr class="bt"><td class="lb">Sum of the three</td><td class="r">'+fmt(tot)+'</td></tr><tr><td class="lb">Check (should be 0)</td><td class="r '+(diff===0?'ok':'')+'">'+fmt(diff)+(diff===0?' \u2713':'')+'</td></tr></table></div>';
+  h+='<p class="foot">In Excel this check showed 200 because last year\u2019s rows were mixed into one total. Here each year keeps its own total, so the three statuses always add up.</p>';
+  return h;
+}
+
+/* ===================== Ongoing Projects ===================== */
+function prjHTML(){
+  var f=FY[S.fy],c=calc(f),ed=can('projects');
+  var h='<div class="bar">'+(ed?'<button class="btn pri" type="button" data-act="addOrd">Add order</button>':'')+'</div>';
+  if(f.note)h+='<div class="note lock">'+esc(f.note)+'</div>';
+  h+='<div class="sheet">'+sheetHead('Confirmed Orderbook & Target Billing','<div class="tbox">Target billing in '+esc(f.label)+'<b>'+rs(c.expected)+'</b></div>');
+  h+='<div style="padding:8px 18px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--line)">Note: all values in Rs. lakhs</div>';
+  h+='<table class="x" style="width:1648px"><colgroup>';
+  [48,140,70,310,104,128,112,120,96,112,96,112,200].forEach(function(w){h+='<col style="width:'+w+'px">';});
+  h+='</colgroup><thead><tr><th>Sr.<br>No.</th><th>Order<br>Month</th><th>Project<br>ID</th><th>Project Name<br><small>(Client Name - Project Details)</small></th><th>Project<br>Category</th><th>Scope of<br>Works</th><th>Contract<br>Type</th><th>Location</th><th>Project<br>Value<br><small>(Rs. In Lakhs)</small></th><th>Balance / Spillover Billing<br><small>(from '+esc(f.prevLabel.split(' / ').pop())+')</small></th><th>Target %<br>Completion in<br>'+esc(f.label)+'</th><th>Target Billing in<br>'+esc(f.label)+'<br><small>(for new projects)</small></th><th>Status /<br>Remarks</th></tr></thead><tbody>';
+  h+='<tr class="sec"><td class="l">A</td><td colspan="12" style="text-align:left;padding-left:8px">Balance / Spillover Billing ('+esc(f.prevLabel.split(' / ').pop())+')</td></tr>';
+  if(!f.spill.length)h+='<tr class="empty"><td colspan="13">No carried-over projects for this year.</td></tr>';
+  f.spill.forEach(function(r,i){
+    var P='spill.'+i+'.';
+    h+='<tr class="reg"><td class="n">'+(i+1)+'</td><td></td>'+tdIn(P+'id',r.id,'s',ed,'n')+tdIn(P+'name',r.name,'s',ed,'nm')+tdSel(P+'cat',r.cat,CATS,ed)+tdSel(P+'scope',r.scope,SCOPES,ed)+tdSel(P+'ct',r.ct,CTS,ed)+tdIn(P+'loc',r.loc,'s',ed)+tdIn(P+'val',r.val,'n',ed,'n')+tdIn(P+'bal',r.bal,'n',ed,'n')+tdPct(P+'pct',pctOf(r),ed)+'<td class="n bt">'+fmt(spillM(r))+'</td>'+tdIn(P+'rem',r.rem,'s',ed)+'</tr>';
+  });
+  h+='<tr class="tot"><td colspan="3"></td><td class="lb">SUB - TOTAL</td><td colspan="4"></td><td></td><td class="n">'+fmt(c.spillK)+'</td><td></td><td class="n">'+fmt(c.spillM)+'</td><td></td></tr>';
+  h+='<tr class="sec"><td class="l">B</td><td colspan="12" style="text-align:left;padding-left:8px">New Projects ('+esc(f.label)+')</td></tr>';
+  if(!f.orders.length)h+='<tr class="empty"><td colspan="13">No orders yet. Use \u201CAdd order\u201D to enter the first one.</td></tr>';
+  f.orders.forEach(function(o,i){
+    var P='orders.'+i+'.',m=ordM(o),calcM=(+o.val||0)*pctOf(o),diff=o.ovr!=null&&Math.abs(o.ovr-calcM)>0.005;
+    var mc=diff?'<td class="n bt" title="Excel had '+fmt(o.ovr)+' typed in. Value \u00D7 % gives '+fmt(calcM)+'. Click the flag to use the formula."><span class="flag" data-act="fix" data-i="'+i+'" role="button" tabindex="0" aria-label="Use formula">\u26A0</span> '+fmt(m)+'</td>':'<td class="n bt">'+fmt(m)+'</td>';
+    h+='<tr class="reg"><td class="n">'+(i+1)+'</td>'+tdMonth(P+'m',o.m,ed)+tdIn(P+'id',o.id,'s',ed,'n')+tdIn(P+'name',o.name,'s',ed,'nm')+tdSel(P+'cat',o.cat,CATS,ed)+tdSel(P+'scope',o.scope,SCOPES,ed)+tdSel(P+'ct',o.ct,CTS,ed)+tdIn(P+'loc',o.loc,'s',ed)+tdIn(P+'val',o.val,'n',ed,'n')+'<td class="n">NA</td>'+tdPct(P+'pct',pctOf(o),ed)+mc+tdIn(P+'rem',o.rem,'s',ed)+'</tr>';
+  });
+  h+='<tr class="tot"><td colspan="3"></td><td class="lb">SUB - TOTAL</td><td colspan="4"></td><td class="n">'+fmt(c.ordJ)+'</td><td></td><td></td><td class="n">'+fmt(c.ordM)+'</td><td></td></tr>';
+  h+='<tr class="tot"><td colspan="3"></td><td class="lb">GRAND - TOTAL</td><td colspan="4"></td><td class="n">'+fmt(c.ordJ)+'</td><td class="n">'+fmt(c.spillK)+'</td><td></td><td class="n">'+fmt(c.expected)+'</td><td></td></tr>';
+  h+='</tbody></table></div>';
+  h+='<p class="foot">Target billing = project value (or spillover balance) \u00D7 target % completion. The dashboard reads its booking value and expected billing from this sheet.</p>';
+  return h;
+}
+
+/* ===================== Users & Access ===================== */
+function usrHTML(){
+  var rows=Object.keys(ROLES).map(function(k,i){var r=ROLES[k];
+    return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.title)+'</td><td>'+esc(r.email)+'</td><td><span class="dot'+(i<4?'':' off')+'"></span>'+(i<4?'Online':'Last seen yesterday')+'</td></tr>';}).join('');
+  var mx=[['Admin',1,1,1,1,1],['Sales coordinator',0,0,1,0,0],['Project manager',0,0,0,1,0],['Accounts',0,1,0,0,0],['Viewer',0,0,0,0,0]];
+  var head=['Targets and monthly counts','Billing and collection','Enquiries Register','Ongoing Projects','Users and access'];
+  var m='<table class="ux"><thead><tr><th>Role</th>'+head.map(function(x){return '<th class="c">'+x+'</th>';}).join('')+'</tr></thead><tbody>'+mx.map(function(r){return '<tr><td><b>'+r[0]+'</b></td>'+r.slice(1).map(function(v){return '<td class="c">'+(v?'<span class="pill on">Edit</span>':'<span class="pill v">View</span>')+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table>';
+  return '<div class="panel"><h2>People</h2><p>Everyone signs in with their own account, so every change is recorded against a name.</p><table class="ux"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin-top:12px"><button class="btn pri" type="button" data-act="invite">Invite user</button></div></div>'
+   +'<div class="panel"><h2>What each role can do</h2><p>Everyone can view every sheet. Edit rights are set per sheet.</p>'+m+'</div>'
+   +'<div class="panel"><h2>Closed years</h2><p>FY 24-25 and FY 25-26 are closed. Only Admin can change a closed year. Reopening or closing a year is one click here.</p><span class="pill">FY 24-25 closed</span> <span class="pill">FY 25-26 closed</span> <span class="pill on">FY 26-27 open</span></div>';
+}
+
+/* ===================== shell rendering ===================== */
+var ICON={dash:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',reg:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"/></svg>',prj:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',usr:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M17 4.5a3.5 3.5 0 0 1 0 7M21.5 20c0-2.6-1.4-4.5-3.5-5.4"/></svg>'};
+function initShell(){
+  $('#roleSel').innerHTML=Object.keys(ROLES).map(function(k){return '<option value="'+k+'">'+esc(ROLES[k].name+' ('+ROLES[k].title+')')+'</option>';}).join('');
+  $('#roleSel').value=S.role;
+  fillFY();
+  $('#tabbar').innerHTML='';
+  TABS.forEach(function(t){
+    var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+t.id;b.setAttribute('role','tab');b.dataset.tab=t.id;b.innerHTML=ICON[t.id]+'<span>'+t.label+'</span>';
+    $('#tabbar').appendChild(b);
+  });
+  var st=document.createElement('div');st.className='status';st.id='status';$('#tabbar').appendChild(st);
+}
+function fillFY(){
+  var keys=Object.keys(FY).sort();
+  $('#fySel').innerHTML=keys.map(function(k){return '<option value="'+k+'">'+FY[k].label+(FY[k].tag?' ('+FY[k].tag+')':'')+(FY[k].locked?' - closed':'')+'</option>';}).join('')+'<option value="__new">+ New financial year</option>';
+  $('#fySel').value=S.fy;
+}
+function renderChrome(){
+  var r=ROLES[S.role];
+  $('#avs').innerHTML=Object.keys(ROLES).filter(function(k){return k!==S.role&&k!=='viewer';}).map(function(k){var o=ROLES[k];return '<div class="av" style="background:'+o.color+'" title="'+esc(o.name)+' is online">'+o.init+'<i></i></div>';}).join('')+'<div class="av" style="background:'+r.color+'" title="You">'+r.init+'<i></i></div>';
+  TABS.forEach(function(t){
+    var b=$('#tab-'+t.id);
+    b.hidden=!!(t.admin&&r.can.indexOf('users')<0);
+    b.setAttribute('aria-selected',String(S.tab===t.id));
+  });
+  var areas=tabArea(S.tab),txt='View only',on=false;
+  if(S.tab==='usr'){txt='Admin';on=true;}
+  else if(areas.length){on=true;txt={dash:'You can edit: '+areas.map(function(a){return {targets:'targets',monthly:'monthly counts',billing:'billing and collection'}[a];}).join(', '),reg:'You can edit this sheet',prj:'You can edit this sheet'}[S.tab];}
+  else if(FY[S.fy].locked&&S.role!=='admin')txt='View only (closed year)';
+  var last=S.last?'Saved '+S.last:'All changes saved';
+  $('#status').innerHTML='<span class="pill'+(on?' on':' v')+'">'+esc(txt)+'</span><span>'+esc(last)+'</span>';
+}
+function render(){
+  pend=false;
+  var stage=$('#stage'),top=stage.scrollTop,left=stage.scrollLeft;
+  if(S.tab==='usr'&&ROLES[S.role].can.indexOf('users')<0)S.tab='dash';
+  PRES=presence();
+  var f=FY[S.fy],h='';
+  if(S.tab==='dash'){
+    var bar='<div class="bar">';
+    if(can('monthly'))bar+='<button class="btn" type="button" data-act="sync">Recount enquiries from the register</button>';
+    bar+='</div>';
+    h=bar+(f.note?'<div class="note lock">'+esc(f.note)+'</div>':'')+(f.dashNote?'<div class="note">'+esc(f.dashNote)+'</div>':'')+kpiHTML(f,calc(f))+'<div class="sheet">'+dashHTML()+'</div>'+(f.flagProg?'<p class="foot">\u2020 Excel showed \u20B9 1,343.25 here. Its formula also counted a \u20B9 200 L enquiry from last year, which is why the three status values added up to 106%. The web version counts this year\u2019s enquiries only.</p>':'')+'<p class="foot">Hover a cell you can edit to see its outline. Totals, percentages and shortfalls recalculate as you type. Darker month cells mean higher counts.</p>';
+  }else if(S.tab==='reg')h=regHTML();
+  else if(S.tab==='prj')h=prjHTML();
+  else h=usrHTML();
+  stage.innerHTML=h;
+  stage.scrollTop=top;stage.scrollLeft=left;
+  renderChrome();
+  renderLog();
+}
+function renderLog(){
+  $('#logList').innerHTML=S.log.map(function(e){return '<li><div class="av" style="background:'+e.who.color+'">'+e.who.init+'</div><div><b>'+esc(e.who.name)+'</b> '+esc(e.text)+'<time>'+esc(e.time)+'</time></div></li>';}).join('');
+}
+function pushLog(text){
+  var who=ROLES[S.role],t=nowStamp();
+  S.log.unshift({who:who,text:text,time:t});
+  S.last=t.split(', ')[1]+' by '+who.name;
+}
+function toast(msg){var t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true;},2600);}
+
+/* ===================== editing ===================== */
+var FIELD={name:'project name',cat:'category',scope:'scope of works',ct:'contract type',loc:'location',val:'value',client:'client type',status:'status',rem:'remarks',m:'month',id:'project ID',bal:'spillover balance',pct:'completion'};
+function describe(toks,o,a,b){
+  var A=a==null||a===''?'blank':(toks[toks.length-1]==='pct'?Math.round(a*100)+'%':a);
+  var Bv=b==null?'blank':(toks[toks.length-1]==='pct'?Math.round(b*100)+'%':b);
+  var r=toks[0],k=toks[toks.length-1];
+  if(r==='dash'){
+    var sn={A:'Enquiries Generation, '+LA[+toks[2]],C:'Confirmed Order Booking, '+LC[+toks[2]],bill:'Actual Billing Done, row '+(+toks[2]+1),coll:'Revenue Collected, row '+(+toks[2]+1)}[toks[1]];
+    var j=+toks[3];return 'Changed '+sn+' for '+MN[j]+"'"+yy(j<9?FY[S.fy].y:FY[S.fy].y+1)+' from '+A+' to '+Bv+'.';
+  }
+  if(r==='tgt')return 'Changed the annual target from '+A+' to '+Bv+'.';
+  if(r==='enquiries')return 'Changed enquiry '+o.sr+(o.name?' ('+o.name+')':'')+' '+(FIELD[k]||k)+' from '+A+' to '+Bv+'.';
+  return 'Changed '+(o.name||'a project')+' '+(FIELD[k]||k)+' from '+A+' to '+Bv+'.';
+}
+function applyEdit(path,raw,t){
+  var f=FY[S.fy],toks=path.split('.'),o=f,i;
+  for(i=0;i<toks.length-1;i++)o=o[toks[i]];
+  var k=toks[toks.length-1],v=raw;
+  if(t==='n'){v=raw===''?null:parseFloat(raw);if(v!=null&&isNaN(v))v=null;}
+  else if(t==='p'){v=raw===''?null:parseFloat(raw);if(v!=null&&isNaN(v))v=null;if(v!=null)v=Math.max(0,Math.min(100,v))/100;}
+  var old=o[k];
+  if(old===v||(old==null&&v==null)||(old==null&&v==='')||(old===''&&v==null))return;
+  o[k]=v;
+  if(toks[0]==='orders'&&(k==='val'||k==='pct'))delete o.ovr;
+  pushLog(describe(toks,o,old,v));
+  schedule();
+}
+
+var down=false,pend=false;
+function schedule(){pend=true;if(!down)setTimeout(flush,0);}
+function flush(){
+  if(!pend||down)return;
+  var a=document.activeElement,p=a&&a.dataset?a.dataset.p:null;
+  render();
+  if(p){var n=document.querySelector('[data-p="'+p+'"]');if(n){n.focus();if(n.select&&n.type!=='month')n.select();}}
+}
+document.addEventListener('pointerdown',function(){down=true;},true);
+document.addEventListener('pointerup',function(){down=false;setTimeout(flush,40);},true);
+
+/* ===================== events ===================== */
+document.addEventListener('change',function(ev){
+  var el=ev.target;
+  if(el.id==='fySel'){
+    if(el.value==='__new'){
+      var keys=Object.keys(FY).sort(),last=FY[keys[keys.length-1]],nf=newBlankFY(last.y+1,last.tgt);
+      FY[nf.key]=nf;S.fy=nf.key;fillFY();S.last=null;
+      S.log.unshift({who:ROLES[S.role],text:'Started '+nf.label+' with the same annual targets as '+last.label+'.',time:nowStamp()});
+      toast(nf.label+' created with last year\u2019s targets.');
+    }else S.fy=el.value;
+    S.q='';S.sf='All';render();return;
+  }
+  if(el.id==='roleSel'){S.role=el.value;render();toast('Now viewing as '+ROLES[S.role].name+'.');return;}
+  if(el.id==='showPrev'){S.showPrev=el.checked;$('#regBody').innerHTML=regRows();return;}
+  if(el.dataset&&el.dataset.p){applyEdit(el.dataset.p,el.value,el.dataset.t);}
+});
+document.addEventListener('input',function(ev){
+  if(ev.target.id==='q'){S.q=ev.target.value;$('#regBody').innerHTML=regRows();}
+});
+function act(el){
+  var a=el.dataset.act,f=FY[S.fy];
+  if(a==='sf'){S.sf=el.dataset.v;render();}
+  else if(a==='addEnq'){
+    var n=Math.max.apply(null,[0].concat(f.enquiries.filter(function(e){return e.blk==='cur';}).map(function(e){return e.sr;})))+1;
+    var pm=f.asOf.split('.'),ym=(2000+ +pm[2])+'-'+pm[1];
+    f.enquiries.push({sr:n,m:ym,name:'',cat:'Office',scope:'Interior',ct:'Turnkey',loc:'Pune',val:null,client:'Corporate',status:'In Progress',rem:'',blk:'cur'});
+    pushLog('Added enquiry '+n+'.');render();
+    var inp=document.querySelector('[data-p="enquiries.'+(f.enquiries.length-1)+'.name"]');
+    if(inp){inp.scrollIntoView({block:'center'});inp.focus();}
+  }else if(a==='addOrd'){
+    var pm2=f.asOf.split('.');
+    f.orders.push({m:(2000+ +pm2[2])+'-'+pm2[1],id:'',name:'',cat:'Office',scope:'Interior',ct:'Turnkey',loc:'Pune',val:null,pct:1,rem:''});
+    pushLog('Added a new order.');render();
+    var inp2=document.querySelector('[data-p="orders.'+(f.orders.length-1)+'.name"]');
+    if(inp2){inp2.scrollIntoView({block:'center'});inp2.focus();}
+  }else if(a==='fix'){
+    var o=f.orders[+el.dataset.i];delete o.ovr;pushLog('Reset target billing for '+o.name+' to value \u00D7 % completion.');render();
+  }else if(a==='sync'){
+    var nA=deriveA(f),ch=0;
+    for(var r=0;r<4;r++)for(var j=0;j<12;j++){if((nA[r][j]||0)!==(f.dash.A[r][j]||0))ch++;}
+    f.dash.A=nA;
+    pushLog('Recounted Enquiries Generation from the register ('+ch+' cells changed).');render();
+    toast(ch?ch+' monthly counts updated to match the register.':'Counts already match the register.');
+  }else if(a==='invite'){toast('Invites send an email with a sign-up link.');}
+}
+document.addEventListener('click',function(ev){
+  var t=ev.target.closest('[data-act]');if(t){act(t);return;}
+  var tb=ev.target.closest('.tab');if(tb){S.tab=tb.dataset.tab;S.q='';S.sf='All';render();$('#stage').scrollTop=0;return;}
+});
+document.addEventListener('keydown',function(ev){
+  if((ev.key==='Enter'||ev.key===' ')&&ev.target.dataset&&ev.target.dataset.act==='fix'){ev.preventDefault();act(ev.target);}
+  if(ev.key==='Escape')closeDrawer();
+});
+function closeDrawer(){$('#drawer').classList.remove('open');$('#drawer').setAttribute('aria-hidden','true');}
+$('#actBtn').addEventListener('click',function(){var d=$('#drawer');d.classList.add('open');d.setAttribute('aria-hidden','false');});
+$('#drClose').addEventListener('click',closeDrawer);
+$('#expBtn').addEventListener('click',function(){toast('Export builds an .xlsx in the same layout as your Excel file.');});
+
+initShell();render();
+})();
+</script>
+</body>
+</html>
