@@ -155,16 +155,112 @@ table.ux{border-collapse:collapse;width:100%;font-size:13px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#101828;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;max-width:90vw}
 .toast[hidden]{display:none}
 @media (prefers-reduced-motion:reduce){.drawer{transition:none}}
-@media (max-width:820px){
-  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr)}
-  .tabbar{grid-column:1;grid-row:2;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:8px}
-  .tab{white-space:nowrap}
-  .status{display:none}
-  .stage{grid-column:1;grid-row:3;padding:14px 10px 28px}
-  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .kpi{border-bottom:1px solid var(--line)}
-  .q{width:100%}
+.scrollx{overflow-x:auto}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips .chip{flex:none}
+.tab .sh{display:none}
+.kpis{max-width:none}
+
+/* phone cards */
+.mcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:clip}
+.mcard h3{margin:0;padding:12px 14px;font-size:14.5px;font-weight:800;background:var(--sec);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;padding:12px 14px;border-bottom:1px solid var(--rowline);align-items:center}
+.mrow.hi{background:var(--tot)}
+.mrow .l{font-weight:700;font-size:13.5px;min-width:0}
+.mrow .r{font-weight:800;font-size:17px;text-align:right}
+.mrow .r small{font-weight:600;font-size:12px;color:var(--text2)}
+.mrow .sub{grid-column:1 / -1;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text2);flex-wrap:wrap}
+.mrow .sub .pb{flex:1 1 80px;width:auto;min-width:60px;margin:0}
+.mrow .sub b{color:var(--text)}
+.mrow .tg{margin-left:auto;display:flex;align-items:center;gap:6px}
+.neg{color:var(--neg);font-weight:700}
+.minp{height:42px;min-width:0;border:1px solid var(--line);border-radius:10px;text-align:center;font:inherit;font-weight:700;font-size:16px;background:var(--surface);color:var(--text);padding:0 8px;width:84px}
+.minp.wide{width:100%;text-align:left}
+.minp:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+select.minp{appearance:none;-webkit-appearance:none}
+.mval{font-weight:700;font-size:14px;padding:6px 0;word-break:break-word}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:8px 14px 14px}
+.mfld{display:flex;flex-direction:column;gap:4px;font-size:11.5px;color:var(--text2);font-weight:700;min-width:0}
+.mfld .minp{width:100%}
+.mf{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 14px 16px}
+.mf .full{grid-column:1 / -1}
+.mh{padding:10px 14px 0;font-weight:800;font-size:13px}
+details.md>summary{list-style:none;cursor:pointer;padding:12px 14px;font-size:13px;font-weight:800;color:var(--accent);border-top:1px solid var(--rowline);display:flex;justify-content:space-between;align-items:center;min-height:46px}
+details.md>summary::-webkit-details-marker{display:none}
+details.md>summary::after{content:"+";font-size:20px;line-height:1}
+details.md[open]>summary::after{content:"\2212"}
+.eh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:13px 14px 4px}
+.en{min-width:0}
+.en b{display:block;font-size:15px;line-height:1.3;word-break:break-word}
+.en small{color:var(--text2);font-size:12px}
+.tb{text-align:right;flex:none}
+.tb small{display:block;color:var(--text2);font-size:11px}
+.tb b{font-size:16px}
+.ev{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline;padding:2px 14px 12px;font-size:12.5px;color:var(--text2)}
+.ev b{color:var(--text);font-size:15px}
+.er{padding:0 14px 12px;font-size:12.5px;color:var(--text2)}
+.spill{display:inline-block;border:0;border-radius:999px;font-weight:800;font-size:12px;padding:7px 14px;font-family:inherit;appearance:none;-webkit-appearance:none;white-space:nowrap;flex:none}
+.spill.st-c{background:var(--okb);color:var(--okt)}
+.spill.st-p{background:var(--wb);color:var(--wt)}
+.spill.st-l{background:var(--bb);color:var(--bt)}
+.mtotal{display:flex;justify-content:space-between;align-items:center;background:var(--accent-soft);border-radius:12px;padding:12px 16px;margin-bottom:12px}
+.mtotal span{font-size:12.5px;font-weight:700}
+.mtotal b{color:var(--accent);font-size:20px}
+.msec{margin:18px 2px 8px;font-size:13px;font-weight:800;color:var(--text2)}
+.flagbtn{display:block;margin:0 14px 12px;border:1px solid #f3c67a;background:#fff7e6;color:#92400e;border-radius:10px;padding:9px 12px;font-weight:700;font-size:12.5px;cursor:pointer;text-align:left}
+.fab{position:fixed;right:16px;bottom:calc(78px + env(safe-area-inset-bottom,0px));background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:14px 20px;font-weight:800;font-size:14px;box-shadow:0 6px 18px rgba(16,24,40,.25);z-index:20;cursor:pointer}
+
+/* large screens */
+@media (min-width:1700px){
+  .stage{padding:24px 36px 44px}
+  .x td,.x th{font-size:14px}
+  .shead .co{font-size:19px}
 }
+/* tablet: icon rail */
+@media (max-width:1100px) and (min-width:761px){
+  .app{grid-template-columns:72px minmax(0,1fr)}
+  .tabbar{padding:12px 10px;align-items:center}
+  .tab{justify-content:center;padding:0;width:50px;height:50px}
+  .tab .lg,.tab .sh{display:none}
+  .status{display:none}
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .kpi{border-bottom:1px solid var(--line)}
+  .brand{min-width:0}
+  .avs{display:none}
+  .kpi:last-child{grid-column:span 2;border-right:0}
+  .stage{padding:16px}
+}
+/* phone: bottom navigation and cards */
+@media (max-width:760px){
+  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto}
+  .topbar{padding:10px 12px;gap:10px}
+  .topbar .sp,.avs,#expBtn{display:none}
+  .brand{min-width:0;flex:1 1 auto}
+  .brand b{font-size:15px}
+  .topbar .ctl{flex:1 1 calc(50% - 6px);min-width:0}
+  .topbar select{min-width:0;width:100%;font-size:14px;padding:10px}
+  #actBtn{min-height:42px}
+  .tabbar{grid-column:1;grid-row:3;flex-direction:row;justify-content:space-around;gap:2px;border-right:0;border-top:1px solid var(--line);padding:6px;overflow:visible}
+  .tab{flex:1;flex-direction:column;gap:3px;justify-content:center;align-items:center;font-size:11px;padding:7px 2px;min-height:54px;border-radius:12px;min-width:0}
+  .tab .lg{display:none}
+  .tab .sh{display:inline}
+  .status{display:none}
+  .stage{grid-column:1;grid-row:2;padding:12px 12px 100px}
+  .q{width:100%;font-size:16px;padding:11px 12px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi{border-bottom:1px solid var(--line);padding:12px 14px}
+  .kpi:nth-child(2n){border-right:0}
+  .kpi:last-child{grid-column:1 / -1;border-bottom:0}
+  .kpi b{font-size:21px}
+  .btn{min-height:44px}
+  .note{font-size:12.5px;padding:9px 12px}
+  .panel{padding:14px}
+  .drawer{width:100vw}
+  .toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+  .foot{font-size:12px}
+}
+
 </style>
 
 </head>
@@ -215,10 +311,10 @@ var ROLES={
   viewer:{name:'Management guest',title:'Viewer',init:'MG',color:'#5f6663',email:'guest@company.example',can:[]}
 };
 var TABS=[
-  {id:'dash',label:'Business Dashboard'},
-  {id:'reg',label:'Enquiries Register'},
-  {id:'prj',label:'Ongoing Projects'},
-  {id:'usr',label:'Users & Access',admin:true}
+  {id:'dash',label:'Business Dashboard',short:'Dashboard'},
+  {id:'reg',label:'Enquiries Register',short:'Enquiries'},
+  {id:'prj',label:'Ongoing Projects',short:'Projects'},
+  {id:'usr',label:'Users & Access',short:'Users',admin:true}
 ];
 
 /* ===================== helpers ===================== */
@@ -321,7 +417,7 @@ function deriveC(f){
 }
 
 /* ===================== state ===================== */
-var S={fy:'2026-27',tab:'dash',role:'admin',q:'',sf:'All',showPrev:true,last:null,
+var S={open:{},fy:'2026-27',tab:'dash',role:'admin',q:'',sf:'All',showPrev:true,last:null,
   log:[
     {who:ROLES.admin,text:'Loaded the FY 26-27 Excel workbook (as on 12.10.26).',time:'12 Oct, 10:05'},
     {who:ROLES.projects,text:'Changed Mr. Mehtani Bungalow (External Development) completion from 100% to 70%.',time:'12 Oct, 10:42'},
@@ -431,7 +527,7 @@ function dashHTML(){
   var f=FY[S.fy],c=calc(f),cT=can('targets'),cM=can('monthly'),cB=can('billing');
   var h='';
   h+=sheetHead('Business Dashboard \u2013 '+f.asOfLabel+' (as on '+f.asOf+')');
-  h+='<table class="x dash" style="width:1714px"><colgroup>';
+  h+='<table class="x dash" style="width:1714px;min-width:100%"><colgroup>';
   [44,250,84,84,122,84,116,122,16].forEach(function(w){h+='<col style="width:'+w+'px">';});
   for(var i=0;i<12;i++)h+='<col style="width:66px">';
   h+='</colgroup><thead><tr><th rowspan="2">Sr.<br>No.</th><th rowspan="2">Particulars</th><th rowspan="2">Annual<br>Target<br><small>(In Nos.)</small></th><th colspan="2">Achieved / Actual<br><small>(till date) (In Nos.)</small></th><th rowspan="2">Shortfall<br><small>(in Nos.)</small></th><th colspan="2">Achieved / Actual<br><small>(till date) (In Nos.)</small></th><th class="gap" rowspan="2"></th><th colspan="12">Achieved - Monthly Register <small>(In Nos.)</small></th></tr>';
@@ -521,7 +617,7 @@ function regHTML(){
   h+='<span class="sp"></span>'+(ed?'<button class="btn pri" type="button" data-act="addEnq">Add enquiry</button>':'')+'</div>';
   if(f.note)h+='<div class="note lock">'+esc(f.note)+'</div>';
   h+='<div class="sheet">'+sheetHead('Enquiries Register / Business Funnel \u2013 '+f.asOfLabel+' (as on '+f.asOf+')','<div class="tbox">Total expected value<b>'+rs(B.value)+'</b></div>');
-  h+='<table class="x" style="width:1518px"><colgroup>';
+  h+='<table class="x" style="width:1518px;min-width:100%"><colgroup>';
   [48,140,320,104,128,108,128,100,104,128,210].forEach(function(w){h+='<col style="width:'+w+'px">';});
   h+='</colgroup><thead><tr><th>Sr.<br>No.</th><th>Enquiry<br>Month</th><th>Project Name<br><small>(Client Name - Project Details)</small></th><th>Project<br>Category</th><th>Scope of<br>Works</th><th>Contract<br>Type</th><th>Location</th><th>Expected<br>Project Value<br><small>(Rs. In Lakhs)</small></th><th>Client Type<br><small>(Individual/<br>Corporate)</small></th><th>Status</th><th>Remarks / Updates<br><small>(Why lost)</small></th></tr></thead><tbody id="regBody">'+regRows()+'</tbody>';
   h+='<tfoot><tr class="tot"><td colspan="2"></td><td class="lb">TOTAL</td><td colspan="4"></td><td class="n">'+fmt(B.value)+'</td><td colspan="3"></td></tr></tfoot></table>';
@@ -540,7 +636,7 @@ function prjHTML(){
   if(f.note)h+='<div class="note lock">'+esc(f.note)+'</div>';
   h+='<div class="sheet">'+sheetHead('Confirmed Orderbook & Target Billing','<div class="tbox">Target billing in '+esc(f.label)+'<b>'+rs(c.expected)+'</b></div>');
   h+='<div style="padding:8px 18px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--line)">Note: all values in Rs. lakhs</div>';
-  h+='<table class="x" style="width:1648px"><colgroup>';
+  h+='<table class="x" style="width:1648px;min-width:100%"><colgroup>';
   [48,140,70,310,104,128,112,120,96,112,96,112,200].forEach(function(w){h+='<col style="width:'+w+'px">';});
   h+='</colgroup><thead><tr><th>Sr.<br>No.</th><th>Order<br>Month</th><th>Project<br>ID</th><th>Project Name<br><small>(Client Name - Project Details)</small></th><th>Project<br>Category</th><th>Scope of<br>Works</th><th>Contract<br>Type</th><th>Location</th><th>Project<br>Value<br><small>(Rs. In Lakhs)</small></th><th>Balance / Spillover Billing<br><small>(from '+esc(f.prevLabel.split(' / ').pop())+')</small></th><th>Target %<br>Completion in<br>'+esc(f.label)+'</th><th>Target Billing in<br>'+esc(f.label)+'<br><small>(for new projects)</small></th><th>Status /<br>Remarks</th></tr></thead><tbody>';
   h+='<tr class="sec"><td class="l">A</td><td colspan="12" style="text-align:left;padding-left:8px">Balance / Spillover Billing ('+esc(f.prevLabel.split(' / ').pop())+')</td></tr>';
@@ -570,10 +666,115 @@ function usrHTML(){
     return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.title)+'</td><td>'+esc(r.email)+'</td><td><span class="dot'+(i<4?'':' off')+'"></span>'+(i<4?'Online':'Last seen yesterday')+'</td></tr>';}).join('');
   var mx=[['Admin',1,1,1,1,1],['Sales coordinator',0,0,1,0,0],['Project manager',0,0,0,1,0],['Accounts',0,1,0,0,0],['Viewer',0,0,0,0,0]];
   var head=['Targets and monthly counts','Billing and collection','Enquiries Register','Ongoing Projects','Users and access'];
-  var m='<table class="ux"><thead><tr><th>Role</th>'+head.map(function(x){return '<th class="c">'+x+'</th>';}).join('')+'</tr></thead><tbody>'+mx.map(function(r){return '<tr><td><b>'+r[0]+'</b></td>'+r.slice(1).map(function(v){return '<td class="c">'+(v?'<span class="pill on">Edit</span>':'<span class="pill v">View</span>')+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table>';
-  return '<div class="panel"><h2>People</h2><p>Everyone signs in with their own account, so every change is recorded against a name.</p><table class="ux"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin-top:12px"><button class="btn pri" type="button" data-act="invite">Invite user</button></div></div>'
+  var m='<div class="scrollx"><table class="ux"><thead><tr><th>Role</th>'+head.map(function(x){return '<th class="c">'+x+'</th>';}).join('')+'</tr></thead><tbody>'+mx.map(function(r){return '<tr><td><b>'+r[0]+'</b></td>'+r.slice(1).map(function(v){return '<td class="c">'+(v?'<span class="pill on">Edit</span>':'<span class="pill v">View</span>')+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table></div>';
+  return '<div class="panel"><h2>People</h2><p>Everyone signs in with their own account, so every change is recorded against a name.</p><div class="scrollx"><table class="ux"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div><div style="margin-top:12px"><button class="btn pri" type="button" data-act="invite">Invite user</button></div></div>'
    +'<div class="panel"><h2>What each role can do</h2><p>Everyone can view every sheet. Edit rights are set per sheet.</p>'+m+'</div>'
    +'<div class="panel"><h2>Closed years</h2><p>FY 24-25 and FY 25-26 are closed. Only Admin can change a closed year. Reopening or closing a year is one click here.</p><span class="pill">FY 24-25 closed</span> <span class="pill">FY 25-26 closed</span> <span class="pill on">FY 26-27 open</span></div>';
+}
+
+
+/* ===================== phone layouts ===================== */
+var MQ=window.matchMedia('(max-width: 760px)');
+function isMob(){return MQ.matches;}
+function mNum(path,val,ed){return ed?'<input class="minp" data-p="'+path+'" data-t="n" value="'+(val==null?'':esc(val))+'" inputmode="decimal" autocomplete="off" aria-label="Value">':'<b>'+(val==null||val===''?'\u2013':esc(val))+'</b>';}
+function mFld(label,inner,full){return '<label class="mfld'+(full?' full':'')+'"><span>'+label+'</span>'+inner+'</label>';}
+function mIn(path,val,t,ed,label,full){return mFld(label,ed?'<input class="minp wide" data-p="'+path+'" data-t="'+t+'" value="'+esc(val==null?'':val)+'" inputmode="'+(t==='s'?'text':'decimal')+'" autocomplete="off">':'<div class="mval">'+(val==null||val===''?'\u2013':esc(val))+'</div>',full);}
+function mSel(path,val,opts,ed,label){
+  if(!ed)return mFld(label,'<div class="mval">'+esc(val||'\u2013')+'</div>');
+  var o=opts.slice();if(val&&o.indexOf(val)<0)o.push(val);
+  return mFld(label,'<select class="minp wide" data-p="'+path+'" data-t="s">'+(val?'':'<option value=""></option>')+o.map(function(x){return '<option'+(x===val?' selected':'')+'>'+esc(x)+'</option>';}).join('')+'</select>');
+}
+function mMonth(path,val,ed,label){return mFld(label,ed?'<input class="minp wide" type="month" data-p="'+path+'" data-t="s" value="'+esc(val||'')+'">':'<div class="mval">'+esc(mLbl(val)||'\u2013')+'</div>');}
+function mPct(path,val,ed,label){var sh=val==null?'':Math.round(val*1000)/10;return mFld(label,ed?'<input class="minp wide" data-p="'+path+'" data-t="p" value="'+sh+'" inputmode="decimal">':'<div class="mval">'+(val==null?'\u2013':sh+'%')+'</div>');}
+function mBar(a,b){var p=b?Math.max(0,Math.min(100,a/b*100)):0;return '<div class="pb"><i style="width:'+p+'%"></i></div>';}
+function mDet(key,title,body){return '<details class="md" data-k="'+key+'"'+(S.open[key]?' open':'')+'><summary>'+title+'</summary>'+body+'</details>';}
+function mMonths(arr,base,ed,f){
+  return '<div class="mgrid">'+MN.map(function(m,j){var p=base+'.'+j,v=arr[j];
+    return '<label class="mfld"><span>'+m+"'"+yy(j<9?f.y:f.y+1)+'</span>'+(ed?'<input class="minp wide" data-p="'+p+'" data-t="n" value="'+(v==null?'':v)+'" inputmode="decimal" autocomplete="off">':'<div class="mval">'+(v==null?'\u2013':v)+'</div>')+'</label>';}).join('')+'</div>';
+}
+function mDiff(n){return '<span class="'+(n<0?'neg':'')+'">'+(n<0?n+' short':n>0?'+'+n+' ahead':'on target')+'</span>';}
+function mCountCard(letter,title,labels,tgtArr,tgtBase,sums,months,mBase,tot,cT,cM,f){
+  var tT=sum(tgtArr);
+  var h='<section class="mcard"><h3><span>'+title+'</span><span class="pill">'+letter+'</span></h3>';
+  h+='<div class="mrow hi"><div class="l">Total</div><div class="r">'+tot+' <small>of '+tT+'</small></div><div class="sub">'+mBar(tot,tT)+'<b>'+pc(tot,tT)+'</b>'+mDiff(tot-tT)+'</div></div>';
+  labels.forEach(function(lab,i){
+    var a=sums[i],t=tgtArr[i];
+    h+='<div class="mrow"><div class="l">'+lab+'</div><div class="r">'+a+'</div><div class="sub">'+mBar(a,t)+'<b>'+pc(a,t)+'</b>'+mDiff(a-t)+'<span class="tg">Target '+mNum(tgtBase+'.'+i,t,cT)+'</span></div></div>';
+  });
+  var body=labels.map(function(lab,i){return '<div class="mh">'+lab+'</div>'+mMonths(months[i],mBase+'.'+i,cM,f);}).join('');
+  return h+mDet('m'+letter,'Monthly register',body)+'</section>';
+}
+function mMoneyCard(title,rows,key,tot,labs,target,cB,f){
+  var T=sum(tot);
+  var h='<section class="mcard"><h3><span>'+title+'</span><span class="pill">F</span></h3>';
+  labs.forEach(function(l,i){h+='<div class="mrow"><div class="l">'+l+'</div><div class="r">'+(tot[i]?rs(tot[i]):'\u2013')+'</div></div>';});
+  h+='<div class="mrow hi"><div class="l">Total</div><div class="r">'+(T?rs(T):'\u2013')+'</div>'+(target?'<div class="sub">'+mBar(T,target)+'<b>'+pc(T,target)+'</b><span>of '+fmt(target,0)+' L target</span></div>':'')+'</div>';
+  var body=labs.map(function(l,i){return '<div class="mh">'+l+'</div>'+mMonths(rows[i],'dash.'+key+'.'+i,cB,f);}).join('');
+  return h+mDet('m'+key,'Monthly amounts (lakhs)',body)+'</section>';
+}
+function dashCards(){
+  var f=FY[S.fy],c=calc(f),B=c.B,cT=can('targets'),cM=can('monthly'),cB=can('billing'),h='';
+  h+='<div class="msec">'+esc(f.asOfLabel)+' (as on '+esc(f.asOf)+')</div>';
+  h+=mCountCard('A','Enquiries Generation',LA,f.tgt.enq,'tgt.enq',c.A,f.dash.A,'dash.A',c.totA,cT,cM,f);
+  h+='<section class="mcard"><h3><span>Enquiries - Status</span><span class="pill">B</span></h3>';
+  h+='<div class="mrow"><div class="l">Total enquiries</div><div class="r">'+B.count+'</div><div class="sub"><span>'+rs(B.value)+'</span></div></div>';
+  [['Confirm orders',B.conf,B.confV],['Enquiries in progress',B.prog,B.progV],['Lost',B.lost,B.lostV]].forEach(function(r,i){
+    h+='<div class="mrow"><div class="l">'+r[0]+'</div><div class="r">'+r[1]+'</div><div class="sub">'+mBar(r[1],B.count)+'<b>'+pc(r[1],B.count)+'</b><span>'+rs(r[2])+(i===1&&f.flagProg?' \u2020':'')+' ('+pc(r[2],B.value)+')</span></div></div>';
+  });
+  h+='<div class="mrow hi"><div class="l">Success conversion ratio</div><div class="r">'+pc(B.conf,B.count)+'</div><div class="sub"><span>'+pc(B.confV,B.value)+' by value</span></div></div></section>';
+  h+=mCountCard('C','Confirmed Order Booking',LC,f.tgt.ord,'tgt.ord',c.C,f.dash.C,'dash.C',c.totC,cT,cM,f);
+  h+='<section class="mcard"><h3><span>Booking value and billing</span><span class="pill">D, E</span></h3>';
+  h+='<div class="mrow"><div class="l">Order value booked</div><div class="r">'+rs(c.ordJ)+'</div><div class="sub">'+mBar(c.ordJ,f.tgt.book)+'<b>'+pc(c.ordJ,f.tgt.book)+'</b><span class="tg">Target '+mNum('tgt.book',f.tgt.book,cT)+'</span></div></div>';
+  h+='<div class="mrow"><div class="l">Target client billing (lakhs)</div><div class="r">'+mNum('tgt.bill',f.tgt.bill,cT)+'</div></div>';
+  h+='<div class="mrow hi"><div class="l">Expected client billing</div><div class="r">'+rs(c.expected)+'</div><div class="sub">'+mBar(c.expected,f.tgt.bill)+'<b>'+pc(c.expected,f.tgt.bill)+'</b><span>of target billing</span></div></div></section>';
+  var yl='April '+yy(f.y)+' - March '+yy(f.y+1);
+  h+=mMoneyCard('Actual Billing Done',f.dash.bill,'bill',c.bill,['CIPL : '+yl,'MCL Prov : '+yl],f.tgt.bill,cB,f);
+  h+=mMoneyCard('Revenue Collected',f.dash.coll,'coll',c.coll,['CIPL : '+yl,'Prov : '+yl],f.tgt.coll,cB,f);
+  return h;
+}
+function regCards(){
+  var f=FY[S.fy],ed=can('register'),q=S.q.trim().toLowerCase(),h='',n=0;
+  f.enquiries.forEach(function(e,i){
+    if(e.blk!=='cur')return;
+    if(S.sf!=='All'&&e.status!==S.sf)return;
+    if(q&&(e.name+' '+e.loc+' '+e.cat+' '+e.rem+' '+e.client).toLowerCase().indexOf(q)<0)return;
+    n++;
+    var P='enquiries.'+i+'.',cls=e.status==='Confirm'?'st-c':e.status==='In Progress'?'st-p':e.status==='Lost'?'st-l':'';
+    var stat=ed?'<select class="spill '+cls+'" data-p="'+P+'status" data-t="s" aria-label="Status">'+(e.status?'':'<option value=""></option>')+STATUSES.map(function(x){return '<option'+(x===e.status?' selected':'')+'>'+x+'</option>';}).join('')+'</select>':'<span class="spill '+cls+'">'+esc(e.status||'\u2013')+'</span>';
+    var fields='<div class="mf">'+mIn(P+'name',e.name,'s',ed,'Project name',true)+mMonth(P+'m',e.m,ed,'Enquiry month')+mIn(P+'val',e.val,'n',ed,'Value (lakhs)')+mSel(P+'cat',e.cat,CATS,ed,'Category')+mSel(P+'scope',e.scope,SCOPES,ed,'Scope of works')+mSel(P+'ct',e.ct,CTS,ed,'Contract type')+mIn(P+'loc',e.loc,'s',ed,'Location')+mSel(P+'client',e.client,CLIENTS,ed,'Client type')+mIn(P+'rem',e.rem,'s',ed,'Remarks (why lost)',true)+'</div>';
+    h+='<article class="mcard"><div class="eh"><div class="en"><b>'+esc(e.name||'New enquiry')+'</b><small>No. '+e.sr+', '+esc(mLbl(e.m))+'</small></div>'+stat+'</div><div class="ev"><b>'+(e.val==null?'\u2013':rs(e.val))+'</b><span>'+esc(e.cat)+(e.loc?', '+esc(e.loc):'')+'</span></div>'+(e.rem?'<div class="er">'+esc(e.rem)+'</div>':'')+mDet('e'+i,ed?'Edit details':'Details',fields)+'</article>';
+  });
+  if(!n)h='<div class="note">'+(f.enquiries.some(function(e){return e.blk==='cur';})?'No enquiries match this filter.':'No enquiries yet. Tap \u201CAdd enquiry\u201D to enter the first one.')+'</div>';
+  return h;
+}
+function regMobile(){
+  var f=FY[S.fy],c=calc(f),ed=can('register'),B=c.B;
+  var counts={All:B.count,Confirm:B.conf,'In Progress':B.prog,Lost:B.lost};
+  var h='<div class="bar"><input class="q" id="q" type="search" placeholder="Search project, location, client" value="'+esc(S.q)+'" aria-label="Search enquiries"></div><div class="chips">';
+  ['All','Confirm','In Progress','Lost'].forEach(function(s){h+='<button type="button" class="chip" data-act="sf" data-v="'+s+'" aria-pressed="'+(S.sf===s)+'">'+s+' ('+counts[s]+')</button>';});
+  h+='</div>'+(f.note?'<div class="note lock">'+esc(f.note)+'</div>':'');
+  h+='<div class="mtotal"><span>Total expected value</span><b>'+rs(B.value)+'</b></div><div id="mlist">'+regCards()+'</div>';
+  if(ed)h+='<button class="fab" type="button" data-act="addEnq">+ Add enquiry</button>';
+  return h;
+}
+function prjCard(kind,i,r){
+  var f=FY[S.fy],ed=can('projects'),P=kind+'.'+i+'.',key=(kind==='spill'?'s':'o')+i,isS=kind==='spill';
+  var m=isS?spillM(r):ordM(r),flag='';
+  if(!isS){var cm=(+r.val||0)*pctOf(r);if(r.ovr!=null&&Math.abs(r.ovr-cm)>0.005)flag='<button class="flagbtn" type="button" data-act="fix" data-i="'+i+'">\u26A0 Excel had '+fmt(r.ovr)+'. Tap to use value \u00D7 % ('+fmt(cm)+')</button>';}
+  var fields='<div class="mf">'+mIn(P+'name',r.name,'s',ed,'Project name',true)+mIn(P+'id',r.id,'s',ed,'Project ID')+(isS?'':mMonth(P+'m',r.m,ed,'Order month'))+mSel(P+'cat',r.cat,CATS,ed,'Category')+mSel(P+'scope',r.scope,SCOPES,ed,'Scope of works')+mSel(P+'ct',r.ct,CTS,ed,'Contract type')+mIn(P+'loc',r.loc,'s',ed,'Location')+mIn(P+'val',r.val,'n',ed,'Project value')+(isS?mIn(P+'bal',r.bal,'n',ed,'Spillover balance'):'')+mPct(P+'pct',pctOf(r),ed,'Target % completion')+mIn(P+'rem',r.rem,'s',ed,'Status / remarks',true)+'</div>';
+  return '<article class="mcard"><div class="eh"><div class="en"><b>'+esc(r.name||'New order')+'</b><small>'+esc(r.id||'No ID')+(!isS&&r.m?', '+esc(mLbl(r.m)):'')+'</small></div><div class="tb"><small>Target billing</small><b>'+rs(m)+'</b></div></div><div class="ev"><span>Value <b>'+(r.val==null?'\u2013':fmt(r.val))+'</b></span>'+(isS?'<span>Balance <b>'+fmt(r.bal)+'</b></span>':'')+'<span>Complete <b>'+Math.round(pctOf(r)*100)+'%</b></span></div>'+flag+mDet(key,ed?'Edit details':'Details',fields)+'</article>';
+}
+function prjMobile(){
+  var f=FY[S.fy],c=calc(f),ed=can('projects'),pv=esc(f.prevLabel.split(' / ').pop());
+  var h=(f.note?'<div class="note lock">'+esc(f.note)+'</div>':'')+'<div class="mtotal"><span>Target billing in '+esc(f.label)+'</span><b>'+rs(c.expected)+'</b></div>';
+  h+='<div class="msec">A. Balance / spillover billing ('+pv+')</div>';
+  h+=f.spill.length?f.spill.map(function(r,i){return prjCard('spill',i,r);}).join(''):'<div class="note">No carried-over projects for this year.</div>';
+  h+='<div class="mrow hi mcard"><div class="l">Spillover sub-total</div><div class="r">'+rs(c.spillM)+'</div></div>';
+  h+='<div class="msec">B. New projects ('+esc(f.label)+')</div>';
+  h+=f.orders.length?f.orders.map(function(r,i){return prjCard('orders',i,r);}).join(''):'<div class="note">No orders yet. Tap \u201CAdd order\u201D to enter the first one.</div>';
+  h+='<div class="mrow hi mcard"><div class="l">New projects sub-total</div><div class="r">'+rs(c.ordM)+'</div><div class="sub"><span>Project value '+rs(c.ordJ)+'</span></div></div>';
+  if(ed)h+='<button class="fab" type="button" data-act="addOrd">+ Add order</button>';
+  return h;
 }
 
 /* ===================== shell rendering ===================== */
@@ -584,7 +785,7 @@ function initShell(){
   fillFY();
   $('#tabbar').innerHTML='';
   TABS.forEach(function(t){
-    var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+t.id;b.setAttribute('role','tab');b.dataset.tab=t.id;b.innerHTML=ICON[t.id]+'<span>'+t.label+'</span>';
+    var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+t.id;b.setAttribute('role','tab');b.dataset.tab=t.id;b.title=t.label;b.innerHTML=ICON[t.id]+'<span class="lg">'+t.label+'</span><span class="sh">'+t.short+'</span>';
     $('#tabbar').appendChild(b);
   });
   var st=document.createElement('div');st.className='status';st.id='status';$('#tabbar').appendChild(st);
@@ -619,9 +820,9 @@ function render(){
     var bar='<div class="bar">';
     if(can('monthly'))bar+='<button class="btn" type="button" data-act="sync">Recount enquiries from the register</button>';
     bar+='</div>';
-    h=bar+(f.note?'<div class="note lock">'+esc(f.note)+'</div>':'')+(f.dashNote?'<div class="note">'+esc(f.dashNote)+'</div>':'')+kpiHTML(f,calc(f))+'<div class="sheet">'+dashHTML()+'</div>'+(f.flagProg?'<p class="foot">\u2020 Excel showed \u20B9 1,343.25 here. Its formula also counted a \u20B9 200 L enquiry from last year, which is why the three status values added up to 106%. The web version counts this year\u2019s enquiries only.</p>':'')+'<p class="foot">Hover a cell you can edit to see its outline. Totals, percentages and shortfalls recalculate as you type. Darker month cells mean higher counts.</p>';
-  }else if(S.tab==='reg')h=regHTML();
-  else if(S.tab==='prj')h=prjHTML();
+    h=bar+(f.note?'<div class="note lock">'+esc(f.note)+'</div>':'')+(f.dashNote?'<div class="note">'+esc(f.dashNote)+'</div>':'')+kpiHTML(f,calc(f))+(isMob()?dashCards():'<div class="sheet">'+dashHTML()+'</div>')+(f.flagProg?'<p class="foot">\u2020 Excel showed \u20B9 1,343.25 here. Its formula also counted a \u20B9 200 L enquiry from last year, which is why the three status values added up to 106%. The web version counts this year\u2019s enquiries only.</p>':'')+'<p class="foot">'+(isMob()?'Tap a number to change it.':'Hover a cell you can edit to see its outline.')+' Totals, percentages and shortfalls recalculate as you type. Darker month cells mean higher counts.</p>';
+  }else if(S.tab==='reg')h=isMob()?regMobile():regHTML();
+  else if(S.tab==='prj')h=isMob()?prjMobile():prjHTML();
   else h=usrHTML();
   stage.innerHTML=h;
   stage.scrollTop=top;stage.scrollLeft=left;
@@ -687,14 +888,14 @@ document.addEventListener('change',function(ev){
       S.log.unshift({who:ROLES[S.role],text:'Started '+nf.label+' with the same annual targets as '+last.label+'.',time:nowStamp()});
       toast(nf.label+' created with last year\u2019s targets.');
     }else S.fy=el.value;
-    S.q='';S.sf='All';render();return;
+    S.q='';S.sf='All';S.open={};render();return;
   }
   if(el.id==='roleSel'){S.role=el.value;render();toast('Now viewing as '+ROLES[S.role].name+'.');return;}
   if(el.id==='showPrev'){S.showPrev=el.checked;$('#regBody').innerHTML=regRows();return;}
   if(el.dataset&&el.dataset.p){applyEdit(el.dataset.p,el.value,el.dataset.t);}
 });
 document.addEventListener('input',function(ev){
-  if(ev.target.id==='q'){S.q=ev.target.value;$('#regBody').innerHTML=regRows();}
+  if(ev.target.id==='q'){S.q=ev.target.value;if(isMob())$('#mlist').innerHTML=regCards();else $('#regBody').innerHTML=regRows();}
 });
 function act(el){
   var a=el.dataset.act,f=FY[S.fy];
@@ -703,13 +904,13 @@ function act(el){
     var n=Math.max.apply(null,[0].concat(f.enquiries.filter(function(e){return e.blk==='cur';}).map(function(e){return e.sr;})))+1;
     var pm=f.asOf.split('.'),ym=(2000+ +pm[2])+'-'+pm[1];
     f.enquiries.push({sr:n,m:ym,name:'',cat:'Office',scope:'Interior',ct:'Turnkey',loc:'Pune',val:null,client:'Corporate',status:'In Progress',rem:'',blk:'cur'});
-    pushLog('Added enquiry '+n+'.');render();
+    pushLog('Added enquiry '+n+'.');S.open['e'+(f.enquiries.length-1)]=true;render();
     var inp=document.querySelector('[data-p="enquiries.'+(f.enquiries.length-1)+'.name"]');
     if(inp){inp.scrollIntoView({block:'center'});inp.focus();}
   }else if(a==='addOrd'){
     var pm2=f.asOf.split('.');
     f.orders.push({m:(2000+ +pm2[2])+'-'+pm2[1],id:'',name:'',cat:'Office',scope:'Interior',ct:'Turnkey',loc:'Pune',val:null,pct:1,rem:''});
-    pushLog('Added a new order.');render();
+    pushLog('Added a new order.');S.open['o'+(f.orders.length-1)]=true;render();
     var inp2=document.querySelector('[data-p="orders.'+(f.orders.length-1)+'.name"]');
     if(inp2){inp2.scrollIntoView({block:'center'});inp2.focus();}
   }else if(a==='fix'){
@@ -735,6 +936,8 @@ $('#actBtn').addEventListener('click',function(){var d=$('#drawer');d.classList.
 $('#drClose').addEventListener('click',closeDrawer);
 $('#expBtn').addEventListener('click',function(){toast('Export builds an .xlsx in the same layout as your Excel file.');});
 
+document.addEventListener('toggle',function(e){var t=e.target;if(t&&t.dataset&&t.dataset.k){S.open[t.dataset.k]=t.open;}},true);
+if(MQ.addEventListener)MQ.addEventListener('change',function(){render();});else MQ.addListener(function(){render();});
 initShell();render();
 })();
 </script>
